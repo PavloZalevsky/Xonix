@@ -65,7 +65,8 @@ public class Map : MonoBehaviour {
         // get movements
         float moveX = Input.GetAxisRaw("Horizontal") * speed;
         float moveY = Input.GetAxisRaw("Vertical") * speed;
-
+        moveX *= -1;
+        moveY *= -1;
         // limit diagonal
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY)) moveY = 0.0f; else moveX = 0.0f;
 
@@ -79,27 +80,32 @@ public class Map : MonoBehaviour {
         // transform.position.x = new  Mathf.Clamp(transform.position.x, 0, texsize - 1);
         // transform.position.z = Mathf.Clamp(transform.position.z, 0, texsize - 1);
 
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, 0, texSize - 1), transform.position.y, transform.position.z);
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
+       // Debug.Log(Mathf.Clamp(transform.position.x, 0, texSize - 1));
+
+      //  transform.position = new Vector3(Mathf.Clamp(transform.position.x, 0, texSize - 1), transform.position.y, transform.position.z);
+      // transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
+
+        // transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+     //    transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
 
 
         // new
 
-        if (gridpos != oldpos)
-        {
-          //  Vector2 pixelUV = new Vector2(transform.position.x, transform.position.y);
-          //  pixelUV.x *= texSize;
-          //  pixelUV.y *= texSize;
-            //print (pixelUV);
+        //if (gridpos != oldpos)
+        //{
+        //  Vector2 pixelUV = new Vector2(transform.position.x, transform.position.y);
+        //  pixelUV.x *= texSize;
+        //  pixelUV.y *= texSize;
+        //print (pixelUV);
 
-            // TODO: separate maps?
-         //   map[Mathf.RoundToInt(gridpos.x)][Mathf.RoundToInt(gridpos.y)] = 10;
+        // TODO: separate maps?
+        //   map[Mathf.RoundToInt(gridpos.x)][Mathf.RoundToInt(gridpos.y)] = 10;
 
-            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+        tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
             tex.Apply();
 
-        }
-        oldpos = gridpos;
+      //  }
+       // oldpos = gridpos;
 
 
         // new
