@@ -63,7 +63,8 @@ public class Map : MonoBehaviour {
     void Update()
     {
         // get movements
-        float moveX = Input.GetAxisRaw("Horizontal") * speed;
+       
+            float moveX = Input.GetAxisRaw("Horizontal") * speed;
         float moveY = Input.GetAxisRaw("Vertical") * speed;
         moveX *= -1;
         moveY *= -1;
@@ -71,26 +72,38 @@ public class Map : MonoBehaviour {
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY)) moveY = 0.0f; else moveX = 0.0f;
 
 
-        //if()
+        
         // move
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
 
         // get gridpos
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y),0);
-
-        // limit on walls
-        // transform.position.x = new  Mathf.Clamp(transform.position.x, 0, texsize - 1);
-        // transform.position.z = Mathf.Clamp(transform.position.z, 0, texsize - 1);
-
-       // Debug.Log(Mathf.Clamp(transform.position.x, 0, texSize - 1));
+        if (gridpos != oldpos)
+        {
+            byte cur = map[(int)gridpos.x][(int)gridpos.y];
 
 
         // впирання в рамку
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, 1, xMapSize - 2), transform.position.y, transform.position.z);
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 1, yMapSize - 2), transform.position.z);
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, 0, xMapSize - 1), transform.position.y, transform.position.z);
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, yMapSize - 1), transform.position.z);
+
+        if (cur == 1) // самі в себе
+        {
+            Debug.Log("GameOver");
+        }
+
+        if (cur == 33) // В ЗАБОР
+        {
+             // Debug.Log("!!!");
+        }
+
+        if (cur != 33) // тут ми були
+        {
+            map[(int)gridpos.x][(int)gridpos.y] = 1;
+        }
 
         // transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-     //    transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
+        //    transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
 
 
         // new
@@ -108,9 +121,11 @@ public class Map : MonoBehaviour {
         tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
         tex.Apply();
 
-      //  }
-       // oldpos = gridpos;
+            
 
+        }
+
+        oldpos = gridpos;
 
         // new
 
