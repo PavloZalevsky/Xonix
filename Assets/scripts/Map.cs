@@ -43,13 +43,36 @@ public class Map : MonoBehaviour {
             {
                 //map[x][y] = 0;
                 //map[texSize * x + y] = 0;
-                tex.SetPixel(x, y, Color.yellow);
 
-                //if (x == 0 || y == 0 || x == texSize - 1 || y == texSize - 1)
+                //switch (y)
                 //{
-                //    map[x][y] = 33; // border
-                //    tex.SetPixel(x, y, Color.gray);
+                //    case 1:
+                //        tex.SetPixel(x, y, Color.yellow);
+                //        break;
+                //    case 2:
+                //        tex.SetPixel(x, y, Color.black);
+                //        break;
+                //    case 3:
+                //        tex.SetPixel(x, y, Color.gray);
+                //        break;
+                //    case 4:
+                //        tex.SetPixel(x, y, Color.cyan);
+                //        break;
+                //    case 5:
+                //        tex.SetPixel(x, y, Color.red);
+                //        break;
+                //    default:
+                //        break;
                 //}
+
+                tex.SetPixel(x, y, Color.blue);
+
+
+                if (x == 0 || y == 0 || x == texSize - 1 || y == texSize - 1)
+                {
+                   // map[x][y] = 33; // border
+                    tex.SetPixel(x, y, Color.gray);
+                }
             }
         }
 
@@ -102,7 +125,7 @@ public class Map : MonoBehaviour {
         //   map[Mathf.RoundToInt(gridpos.x)][Mathf.RoundToInt(gridpos.y)] = 10;
 
         tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
-            tex.Apply();
+        tex.Apply();
 
       //  }
        // oldpos = gridpos;
