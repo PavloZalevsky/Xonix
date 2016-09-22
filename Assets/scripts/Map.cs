@@ -41,36 +41,13 @@ public class Map : MonoBehaviour {
         {
             for (int x = 0; x < texSize; x++)
             {
-                //map[x][y] = 0;
-                //map[texSize * x + y] = 0;
-
-                //switch (y)
-                //{
-                //    case 1:
-                //        tex.SetPixel(x, y, Color.yellow);
-                //        break;
-                //    case 2:
-                //        tex.SetPixel(x, y, Color.black);
-                //        break;
-                //    case 3:
-                //        tex.SetPixel(x, y, Color.gray);
-                //        break;
-                //    case 4:
-                //        tex.SetPixel(x, y, Color.cyan);
-                //        break;
-                //    case 5:
-                //        tex.SetPixel(x, y, Color.red);
-                //        break;
-                //    default:
-                //        break;
-                //}
-
+                map[x][y] = 0;
                 tex.SetPixel(x, y, Color.blue);
 
 
                 if (x == 0 || y == 0 || x == texSize - 1 || y == texSize - 1)
                 {
-                   // map[x][y] = 33; // border
+                    map[x][y] = 33; // border
                     tex.SetPixel(x, y, Color.gray);
                 }
             }
@@ -93,6 +70,8 @@ public class Map : MonoBehaviour {
         // limit diagonal
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY)) moveY = 0.0f; else moveX = 0.0f;
 
+
+        //if()
         // move
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
 
@@ -105,8 +84,10 @@ public class Map : MonoBehaviour {
 
        // Debug.Log(Mathf.Clamp(transform.position.x, 0, texSize - 1));
 
-      //  transform.position = new Vector3(Mathf.Clamp(transform.position.x, 0, texSize - 1), transform.position.y, transform.position.z);
-      // transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
+
+        // впирання в рамку
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, 1, xMapSize - 2), transform.position.y, transform.position.z);
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 1, yMapSize - 2), transform.position.z);
 
         // transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
      //    transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
