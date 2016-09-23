@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Map : MonoBehaviour {
 
@@ -131,38 +132,59 @@ public class Map : MonoBehaviour {
 				tex.SetPixel(x, y, Color.green);
 			}
 		}
-
-
 	}
+
+    //else if (map[x][y] == 1 && map[x][y+1] == 1 && map[x][y - 1] == 1)
+    //{
+    //    tmp.Add(map[x][y]);
+    //}
+
+    List<byte> tmp = new List<byte>();
+
+    bool git = false;
 	IEnumerator AutiFloodFill()
 	{
 		Debug.Log("!!");
 		bool git = false;
 		bool draw = false;
-		for (int x = 0; x < texSize; x++) {
-			for (int y = 0; y < texSize; y++) {
+		for (int x = 1; x < texSize; x++) {
+			for (int y = 1; y < texSize; y++) {
 
-				if(map[x][y] == 1)
-				{
-					if(!draw && map[x][y+1] != 1)
-					{
-						draw =true;
-					}
-					else
-					{
-						draw =false;
-					}
-				}
-				if(draw)
+
+                if(map[x][y-1] == 0 && map[x][y] == 1 && map[x][y + 1] == 1)
+                {
+                    tmp.Add(map[x][y]);
+                }
+                else if (map[x][y - 1] == 0 && map[x][y] == 1 && map[x][y + 1] == 0)
+                {
+                    tmp.Add(map[x][y]);
+                }
+                else if (map[x][y - 1] == 1 && map[x][y] == 1 && map[x][y + 1] == 0)
+                {
+                    tmp.Add(map[x][y]);
+                }
+
+
+
+
+                if (tmp.Count % 2 == 0)
+                {
+                    draw = true;
+                }
+                else
+                    draw = false;
+
+                if (draw)
 				{
 					tex.SetPixel(x, y, Color.green);
 					tex.Apply();
 				}
 
 			}
-			draw = false;
+            tmp.Clear();
+            draw = false;
 		}
-	start = false;
+	    start = false;
 
 
 		yield return null;
