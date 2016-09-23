@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{8FF2ACF0-355A-F061-24E2-BB5C9E6674A6}</ProjectGuid>
+    <ProjectGuid>{26C9ED81-4D98-8D99-FE72-44EE5ED8D211}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -48,7 +48,12 @@
      <Compile Include="Assets\RenderTextureOnMesh\Scripts\MeshCreator.cs" />
      <Compile Include="Assets\RenderTextureOnMesh\Scripts\Triangulator.cs" />
      <Compile Include="Assets\scripts\CameraMasking.cs" />
+     <Compile Include="Assets\scripts\FloodFiller.cs" />
      <Compile Include="Assets\scripts\Game.cs" />
+     <Compile Include="Assets\scripts\GridMove.cs" />
+     <Compile Include="Assets\scripts\LogicGame.cs" />
+     <Compile Include="Assets\scripts\Map.cs" />
+     <Compile Include="Assets\scripts\TextureExtension.cs" />
      <None Include="Assets\Bumped Reflection Clip.shader" />
      <None Include="Assets\RenderTextureOnMesh\version.txt" />
      <None Include="Assets\shader\MaskConstruction.shader" />

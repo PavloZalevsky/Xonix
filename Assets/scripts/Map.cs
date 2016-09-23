@@ -58,12 +58,25 @@ public class Map : MonoBehaviour {
         gridpos = pos;
         oldpos = -pos;
 
+
+		//FloodFill(map,5,5,20,20);
     }
 
+	bool start = false;
     void Update()
     {
         // get movements
        
+		if(Input.GetKey(KeyCode.U))
+		{
+			if(!start)
+			{
+				start = true;
+
+				StartCoroutine(AutiFloodFill());
+			}
+		}
+
             float moveX = Input.GetAxisRaw("Horizontal") * speed;
         float moveY = Input.GetAxisRaw("Vertical") * speed;
         moveX *= -1;
@@ -72,7 +85,7 @@ public class Map : MonoBehaviour {
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY)) moveY = 0.0f; else moveX = 0.0f;
 
 
-        
+
         // move
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
 
@@ -89,152 +102,90 @@ public class Map : MonoBehaviour {
 
         if (cur == 1) // самі в себе
         {
-            Debug.Log("GameOver");
+				
         }
 
         if (cur == 33) // В ЗАБОР
-        {
-             // Debug.Log("!!!");
+		{
+			//if(!start)
+			//	StartCoroutine(AutiFloodFill());
         }
 
         if (cur != 33) // тут ми були
         {
             map[(int)gridpos.x][(int)gridpos.y] = 1;
         }
-
-        // transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        //    transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, texSize - 1), transform.position.z);
-
-
-        // new
-
-        //if (gridpos != oldpos)
-        //{
-        //  Vector2 pixelUV = new Vector2(transform.position.x, transform.position.y);
-        //  pixelUV.x *= texSize;
-        //  pixelUV.y *= texSize;
-        //print (pixelUV);
-
-        // TODO: separate maps?
-        //   map[Mathf.RoundToInt(gridpos.x)][Mathf.RoundToInt(gridpos.y)] = 10;
-
         tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
         tex.Apply();
-
-            
 
         }
 
         oldpos = gridpos;
-
-        // new
-
-        //    // we have moved?
-        //  if (gridpos != oldpos)
-        // {
-        //   int a =  (int)(texSize * gridpos.x + gridpos.y);
-        // we are in empty spot
-        //if (map[a] == null) return;
-        //if (map[a] == 0) 
-        //{
-        //    var fwd = transform.TransformDirection(-Vector3.up);
-        //    RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), fwd, 10f, 1 << /*LayerMask.NameToLayer("Objects") | */LayerMask.NameToLayer("Ground"));
-
-        //    if (hit != false)
-        //    {
-        //        Vector2 pixelUV = hit.point;
-        //        pixelUV.x *= texSize;
-        //        pixelUV.y *= texSize;
-        //        //print (pixelUV);
-
-        //        // TODO: separate maps?
-        //        map[texSize * Mathf.RoundToInt(pixelUV.x) + Mathf.RoundToInt(pixelUV.y)] = 10;
-
-        //        tex.SetPixel(Mathf.RoundToInt(pixelUV.x), Mathf.RoundToInt(pixelUV.y), Color.green);
-        //        tex.Apply();
-
-        //        if (!drawing) startPos = gridpos;
-        //  drawing = true;
+	}
 
 
-        //    }
-        //}
-        //else
-        //{ // we are in pre-filled area
-
-        // TODO: if neighbour cells are already painted, we should floodfill (because we entered 1x1 hole?)
-
-        // we had been drawing before coming here
-        //   if (drawing)
-        //   {
-        //      drawing = false;
-
-        //Vector3 paintpos = oldpos;
-
-        //Debug.DrawLine(startPos, gridpos, Color.red, 10);
-
-        //if (startPos.z < gridpos.z) paintpos.z -= 1;
-
-        ////if (gridpos.x) paintpos.y = gridpos.y+1;
-        ////if (startPos.y<gridPos.y) paintpos.y = gridPos.y+1;
+	public void FloodFill(byte[][] map, int startX, int startY, byte XtoValue, byte YtoValue)
+	{
+		for (int x = startX; x < startX + XtoValue; x++) {
+			for (int y = startY; y < YtoValue; y++) {
+				tex.SetPixel(x, y, Color.green);
+			}
+		}
 
 
-        //print("paintpos:" + paintpos + " gridpos:" + gridpos + " oldpos:" + oldpos);
-        //f.FloodFill(map, (int)paintpos.x, (int)paintpos.z, 10, 99);
-        //    checkAreas();
-        //   }
-        //  }
+	}
+	IEnumerator AutiFloodFill()
+	{
+		Debug.Log("!!");
+		bool git = false;
+		bool draw = false;
+		for (int x = 0; x < texSize; x++) {
+			for (int y = 0; y < texSize; y++) {
 
-        // oldpos = gridpos;
+				if(map[x][y] == 1)
+				{
+					if(!draw && map[x][y+1] != 1)
+					{
+						draw =true;
+					}
+					else
+					{
+						draw =false;
+					}
+				}
+				if(draw)
+				{
+					tex.SetPixel(x, y, Color.green);
+					tex.Apply();
+				}
 
-        //     }
+			}
+			draw = false;
+		}
+	start = false;
 
 
-        /*
-        if (Input.GetMouseButtonUp (0))
-        {
-        //        print ("fill");
-        f.FloodFill(map, 10, 10, 10, 99);
-        checkAreas();
-        }
-        */
+		yield return null;
+	}
 
-
-    }
-
-
-
-    //void checkAreas()
-    //{
-    //    bool found = false;
-    //    int countArea = 0;
-        
-
-    //    for (var y = 0; y < texSize; y++)
-    //        for (var x = 0; x < texSize; x++)
-    //        {
-    //            var val = map[texSize * x + y];
-
-    //            // its still empty, so its inside building (or its wall?)
-    //            if (val == 0)
-    //            {
-    //                map[texSize * x + y] = 0;
-    //                //tex.SetPixel(x,y,new Color(0,1,0,1));
-
-    //                found = true;
-    //                countArea++;
-    //            }
-
-    //            //it was filled, clean it up
-    //            if (val == 99)
-    //            {
-    //                map[texSize * x + y] = 0;
-    //                tex.SetPixel(x, y, new Color(0, 0, 1, 1));
-    //            }
-    //        }
-
-    //    print("countArea:" + countArea);
-    //    tex.Apply();
-
-    //}
 }
+//if(draw  && map[x][y] == 1 && map[x][y +1] != 1)
+//{
+//	draw = false;
+//}
+//else if(map[x][y] == 1)
+//{
+//	draw = true;
+//}
+
+
+
+
+//if(draw && map[x][y+1] != 1)
+//{
+//	draw =false;
+//}
+//else
+//{
+//	draw =true;
+//}
