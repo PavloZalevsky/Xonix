@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class GameNewLogic : MonoBehaviour {
+public class GameNewLogic : MonoBehaviour
+{
 
-   
+
     public Transform target;
     public int texSize = 128;
     private Texture2D tex;
@@ -102,7 +103,7 @@ public class GameNewLogic : MonoBehaviour {
             return;
 
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
-        { 
+        {
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
@@ -163,43 +164,56 @@ public class GameNewLogic : MonoBehaviour {
         var firstPoint = points.First();
         var lastPoint = points.Last();
 
-        // FIX Y
-        //if (lastPoint.y < firstPoint.y || lastPoint.y > firstPoint.y)
-        //{
-        //    var tmpY = lastPoint.y;
-        //    var dir = firstPoint.y - lastPoint.y > 0 ? 1 : -1;
-        //    while (tmpY > 0 && tmpY < texSize || map[(int)lastPoint.x][(int)tmpY] != 33)
-        //    {
-        //        tmpY += dir;
-        //        tex.SetPixel((int)lastPoint.x, (int)tmpY, Color.green);
-        //        //if (map[(int)tmpY][(int)lastPoint.x] != 33)
-        //        //if (map[(int)lastPoint.x][(int)tmpY] != 33)
-        //        //{
-        //        //    points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
-        //        //    break;
-        //        //}
-        //    }
-        //    points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
-        //}
+        Debug.Log(map[(int)lastPoint.x][(int)lastPoint.y]);
+        if (map[(int)lastPoint.x][(int)lastPoint.y] == 33)
+        {
+            var tmpY = lastPoint.y;
 
-        // FIX X
-        //if (lastPoint.x < firstPoint.x || lastPoint.x > firstPoint.x)
-        //{
-        //    var tmpX = lastPoint.x;
-        //    var dir = firstPoint.x - lastPoint.x > 0 ? 1 : -1;
-        //    while (tmpX > 0 && tmpX < texSize || map[(int)tmpX][(int)lastPoint.y] != 33)
-        //    {
-        //        tmpX += dir;
-        //        tex.SetPixel((int)tmpX, (int)lastPoint.y, Color.green);
-        //        //if (map[(int)tmpY][(int)lastPoint.x] != 33)
-        //        //if (map[(int)lastPoint.x][(int)tmpY] != 33)
-        //        //{
-        //        //    points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
-        //        //    break;
-        //        //}
-        //    }
-        //    points.Add(new Vector3(Mathf.RoundToInt(tmpX), Mathf.RoundToInt(lastPoint.y)));
-        //}
+            Debug.Log(lastPoint.x);
+            if (lastPoint.x == texSize - 1 || lastPoint.x == 0)
+            {
+                //   FIX Y
+                if (lastPoint.y < firstPoint.y || lastPoint.y > firstPoint.y)
+                {
+
+                    var dir = firstPoint.y - lastPoint.y > 0 ? 1 : -1;
+                    while (tmpY > 0 && tmpY < texSize || map[(int)lastPoint.x][(int)tmpY] != 33)
+                    {
+                        tmpY += dir;
+                        tex.SetPixel((int)lastPoint.x, (int)tmpY, Color.green);
+                        if (map[(int)tmpY][(int)lastPoint.x] != 33)
+                            if (map[(int)lastPoint.x][(int)tmpY] != 33)
+                            {
+                                points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
+                                break;
+                            }
+                    }
+                    points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
+                }
+            }
+            if (lastPoint.y == texSize - 1 || lastPoint.y == 0)
+            {
+
+                //  FIX X
+                if (lastPoint.x < firstPoint.x || lastPoint.x > firstPoint.x)
+                {
+                    var tmpX = lastPoint.x;
+                    var dir = firstPoint.x - lastPoint.x > 0 ? 1 : -1;
+                    while (tmpX > 0 && tmpX < texSize || map[(int)tmpX][(int)lastPoint.y] != 33)
+                    {
+                        tmpX += dir;
+                        tex.SetPixel((int)tmpX, (int)lastPoint.y, Color.green);
+                        if (map[(int)tmpY][(int)lastPoint.x] != 33)
+                            if (map[(int)lastPoint.x][(int)tmpY] != 33)
+                            {
+                                points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
+                                break;
+                            }
+                    }
+                    points.Add(new Vector3(Mathf.RoundToInt(tmpX), Mathf.RoundToInt(lastPoint.y)));
+                }
+            }
+        }
     }
 
     public bool polyCheck(Vector3[] p, Vector3 v)
