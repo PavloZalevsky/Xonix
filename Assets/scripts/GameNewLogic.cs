@@ -82,7 +82,6 @@ public class GameNewLogic : MonoBehaviour
             StartCoroutine(AutiFloodFill());
         }
 
-        bool needPoint = false;
         float moveX = Input.GetAxisRaw("Horizontal") * speed * -1f;
         float moveY = Input.GetAxisRaw("Vertical") * speed * -1f;
 
@@ -93,9 +92,9 @@ public class GameNewLogic : MonoBehaviour
         }
 
         // auto-movement
-        var somethingPressed = moveX != 0f || moveY != 0f;
-        moveX = !somethingPressed ? direction.x : moveX;
-        moveY = !somethingPressed ? direction.y : moveY;
+        //var somethingPressed = moveX != 0f || moveY != 0f;
+        //moveX = !somethingPressed ? direction.x : moveX;
+        //moveY = !somethingPressed ? direction.y : moveY;
 
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY))
             moveY = 0.0f;
