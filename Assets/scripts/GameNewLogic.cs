@@ -121,8 +121,8 @@ public class GameNewLogic : MonoBehaviour
 
         if (gridpos != oldpos)
         {
-            int x_x = (Mathf.RoundToInt(transform.position.x));
-            int y_y = (Mathf.RoundToInt(transform.position.y));
+            int x_x = (Mathf.RoundToInt(gridpos.x));
+            int y_y = (Mathf.RoundToInt(gridpos.y));
             byte cur = map[x_x][y_y];
 
             if (cur == 33) // В ЗАБОР
@@ -136,8 +136,11 @@ public class GameNewLogic : MonoBehaviour
                 map[x_x][y_y] = 1;
                 myPoins.Add(new Vector2(x_x, y_y));
             }
-            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
-            tex.Apply();
+        ////    if (cur != 33)
+       //     {
+                tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+                tex.Apply();
+          //  }
 
             if (cur == 1) // самі в себе
             {
@@ -147,10 +150,26 @@ public class GameNewLogic : MonoBehaviour
         oldpos = gridpos;
     }
 
+    bool one = false;
+
     IEnumerator AutiFloodFill()
     {
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
+        tex.SetPixel(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Color.magenta);
+        tex.Apply();
+
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+
+
         CheckForBorders();
+        if (one)
+        {
+            CheckPoins();
+        }
+        one = true;
         for (int y = 0; y < texSize; y++)
             for (int x = 0; x < texSize; x++)
             {
@@ -161,9 +180,35 @@ public class GameNewLogic : MonoBehaviour
             }
         tex.Apply();
 
-        CreateMewBorder();
+
+      //  points.Clear();
+
+        //     CreateMewBorder();
 
         yield return null;
+    }
+
+    private void CheckPoins()
+    {
+        pointsTMP.AddRange(points);
+    //    Debug.Log(points.Count);
+        foreach (var item in pointsTMP)
+        {
+            if (polyCheck(points.ToArray(), item))
+            {
+                tex.SetPixel(Mathf.RoundToInt(item.x), Mathf.RoundToInt(item.y), Color.red);
+                tex.Apply();
+                points.Remove(item);
+            }
+            else
+            {
+                tex.SetPixel(Mathf.RoundToInt(item.x), Mathf.RoundToInt(item.y), Color.white);
+                tex.Apply();
+            }
+
+        }
+      //  Debug.Log(points.Count);
+
     }
 
     private void CreateMewBorder()
