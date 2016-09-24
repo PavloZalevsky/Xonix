@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class GameNewLogic : MonoBehaviour
 {
@@ -69,6 +70,8 @@ public class GameNewLogic : MonoBehaviour
     private List<Vector3> points = new List<Vector3>();
     private List<Vector3> pointsTMP = new List<Vector3>();
 
+    private List<Vector2> myPoins = new List<Vector2>();
+
     private bool isHorizontal = true;
 
     private bool first = true;
@@ -125,19 +128,21 @@ public class GameNewLogic : MonoBehaviour
 
             if (cur == 33) // В ЗАБОР
             {
+             //   Debug.Log("33");
                 //if(!start)
                 // StartCoroutine(AutiFloodFill());
             }
             if (cur != 33) // тут ми були
             {
                 map[x_x][y_y] = 1;
+                myPoins.Add(new Vector2(x_x, y_y));
             }
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
             tex.Apply();
 
             if (cur == 1) // самі в себе
             {
-                Restart();
+              //  Restart();
             }
         }
         oldpos = gridpos;
@@ -156,7 +161,20 @@ public class GameNewLogic : MonoBehaviour
                 }
             }
         tex.Apply();
+
+        CreateMewBorder();
+
         yield return null;
+    }
+
+    private void CreateMewBorder()
+    {
+        foreach (var item in myPoins)
+        {
+            map[(int)item.x][(int)item.y] = 33;
+        }
+
+        myPoins.Clear();
     }
 
     private void CheckForBorders()
@@ -213,6 +231,7 @@ public class GameNewLogic : MonoBehaviour
             }
         }
     }
+
 
     public bool polyCheck(Vector3[] p, Vector3 v)
     {
