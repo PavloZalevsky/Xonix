@@ -118,7 +118,9 @@ public class GameNewLogic : MonoBehaviour {
 
         if (gridpos != oldpos)
         {
-            byte cur = map[(int)gridpos.x][(int)gridpos.y];
+            int x_x = (Mathf.RoundToInt(transform.position.x));
+            int y_y = (Mathf.RoundToInt(transform.position.y));
+            byte cur = map[x_x][y_y];
 
             if (cur == 33) // В ЗАБОР
             {
@@ -127,7 +129,7 @@ public class GameNewLogic : MonoBehaviour {
             }
             if (cur != 33) // тут ми були
             {
-                map[(int)gridpos.x][(int)gridpos.y] = 1;
+                map[x_x][y_y] = 1;
             }
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
             tex.Apply();
@@ -208,5 +210,5 @@ public class GameNewLogic : MonoBehaviour {
             c ^= p[i].y > v.y ^ p[j].y > v.y && v.x < (p[j].x - p[i].x) * (v.y - p[i].y) / (p[j].y - p[i].y) + p[i].x;
         return c;
     }
-    }
 }
+
