@@ -164,12 +164,10 @@ public class GameNewLogic : MonoBehaviour
         var firstPoint = points.First();
         var lastPoint = points.Last();
 
-        Debug.Log(map[(int)lastPoint.x][(int)lastPoint.y]);
         if (map[(int)lastPoint.x][(int)lastPoint.y] == 33)
         {
             var tmpY = lastPoint.y;
 
-            Debug.Log(lastPoint.x);
             if (lastPoint.x == texSize - 1 || lastPoint.x == 0)
             {
                 //   FIX Y
