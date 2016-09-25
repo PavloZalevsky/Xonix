@@ -1,42 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
-public class Map : MonoBehaviour {
+public class Map : MonoBehaviour
+{
 
 
     public Transform target;
-    public int xMapSize = 64;
-    public int yMapSize = 64;
-
-    public int texSize = 64;
+    public int texSize = 128;
     private Texture2D tex;
-    private FloodFiller f = new FloodFiller();
     private byte[][] map;
-   // private byte[] map;
 
-    private float speed = 20.0f;
+    private float speed = 25.0f;
 
     private Vector3 pos;
     private Vector3 oldpos;
     private Vector3 gridpos;
 
-    private bool drawing = false;
-    private Vector3 startPos; // we started drawing from here
+    private Vector3 startPos;
 
     void Start()
     {
-        //map = new byte[texSize * texSize];
-        map = new byte[xMapSize][];
+        map = new byte[texSize][];
         for (int i = 0; i < map.Length; i++)
         {
-            map[i] = new byte[yMapSize];
+            map[i] = new byte[texSize];
         }
         tex = new Texture2D(texSize, texSize);
 
         target.GetComponent<Renderer>().material.mainTexture = tex;
         target.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
-
 
         for (int y = 0; y < texSize; y++)
         {
@@ -44,7 +39,6 @@ public class Map : MonoBehaviour {
             {
                 map[x][y] = 0;
                 tex.SetPixel(x, y, Color.blue);
-
 
                 if (x == 0 || y == 0 || x == texSize - 1 || y == texSize - 1)
                 {
@@ -58,156 +52,288 @@ public class Map : MonoBehaviour {
         pos = transform.position;
         gridpos = pos;
         oldpos = -pos;
-
-
-		//FloodFill(map,5,5,20,20);
+        direction = Vector2.zero;
+        transform.position = Vector3.zero;
+        points.Clear();
+        points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
     }
 
-	bool start = false;
+    bool start = false;
+
+    private Vector2 direction;
+
+    private void Restart()
+    {
+        Start();
+    }
+
+    private List<Vector3> points = new List<Vector3>();
+
+    private List<Vector2> myPoins = new List<Vector2>();
+
+    private bool isHorizontal = true;
+
+    private bool first = true;
     void Update()
     {
-        // get movements
-       
-		if(Input.GetKey(KeyCode.U))
-		{
-			if(!start)
-			{
-				start = true;
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            StartCoroutine(AutiFloodFill());
+        }
 
-				StartCoroutine(AutiFloodFill());
-			}
-		}
+        float moveX = Input.GetAxisRaw("Horizontal") * speed * -1f;
+        float moveY = Input.GetAxisRaw("Vertical") * speed * -1f;
 
-            float moveX = Input.GetAxisRaw("Horizontal") * speed;
-        float moveY = Input.GetAxisRaw("Vertical") * speed;
-        moveX *= -1;
-        moveY *= -1;
-        // limit diagonal
-        if (Mathf.Abs(moveX) > Mathf.Abs(moveY)) moveY = 0.0f; else moveX = 0.0f;
+        if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
+        {
+            moveX = 0f;
+            moveY = 0f;
+        }
 
+        // auto-movement
+        //var somethingPressed = moveX != 0f || moveY != 0f;
+        //moveX = !somethingPressed ? direction.x : moveX;
+        //moveY = !somethingPressed ? direction.y : moveY;
 
+        if (Mathf.Abs(moveX) > Mathf.Abs(moveY))
+            moveY = 0.0f;
+        else
+            moveX = 0.0f;
 
-        // move
+        if (moveX == 0f && moveY == 0f)
+            return;
+
+        if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
+        {
+            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
+            points.Add(new Vector3(gridpos.x, gridpos.y));
+        }
+        gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
+        direction = new Vector2(moveX, moveY);
+
+        //if (gridpos == oldpos)
+        //return;
+        if (gridpos.x < 0 || gridpos.x >= texSize || gridpos.y < 0 || gridpos.y >= texSize)
+            return;
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
+        gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
 
-        // get gridpos
-        gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y),0);
         if (gridpos != oldpos)
         {
-            byte cur = map[(int)gridpos.x][(int)gridpos.y];
+            int x_x = (Mathf.RoundToInt(gridpos.x));
+            int y_y = (Mathf.RoundToInt(gridpos.y));
+            byte cur = map[x_x][y_y];
 
+            if (cur == 33) // В ЗАБОР
+            {
+                //   Debug.Log("33");
+                //if(!start)
+                // StartCoroutine(AutiFloodFill());
+            }
+            if (cur != 33) // тут ми були
+            {
+                map[x_x][y_y] = 1;
+                myPoins.Add(new Vector2(x_x, y_y));
+            }
+            ////    if (cur != 33)
+            //     {
+            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+            tex.Apply();
+            //  }
 
-        // впирання в рамку
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, 0, xMapSize - 1), transform.position.y, transform.position.z);
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, yMapSize - 1), transform.position.z);
-
-        if (cur == 1) // самі в себе
-        {
-				
+            if (cur == 1) // самі в себе
+            {
+                //  Restart();
+            }
         }
+        oldpos = gridpos;
+    }
 
-        if (cur == 33) // В ЗАБОР
-		{
-			//if(!start)
-			//	StartCoroutine(AutiFloodFill());
-        }
+    bool one = false;
 
-        if (cur != 33) // тут ми були
-        {
-            map[(int)gridpos.x][(int)gridpos.y] = 1;
-        }
-        tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+    IEnumerator AutiFloodFill()
+    {
+        points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
+        tex.SetPixel(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Color.magenta);
         tex.Apply();
 
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+
+
+        //CheckForBorders();
+        //if (one)
+        {
+            CheckPoins();
+        }
+        yield break;
+        yield return StartCoroutine(WaitForKeyPress());
+
+        one = true;
+        for (int y = 0; y < texSize; y++)
+            for (int x = 0; x < texSize; x++)
+            {
+                if (polyCheck(points.ToArray(), new Vector3(x, y, 0)))
+                {
+                    tex.SetPixel(x, y, Color.green);
+                }
+            }
+        tex.Apply();
+
+
+        //  points.Clear();
+
+        //     CreateMewBorder();
+
+        yield return null;
+    }
+
+    private IEnumerator WaitForKeyPress()
+    {
+        while (true)
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+                yield break;
+            yield return 0;
+        }
+    }
+
+    private void CheckPoins()
+    {
+        var lastPoint = points.Last();
+        var preLastPoint = points[points.Count - 2];
+        var prePreLastPoint = points[points.Count - 3];
+        var middle = new Vector3(Mathf.RoundToInt((lastPoint.x + preLastPoint.x + prePreLastPoint.x) / 3),
+            Mathf.RoundToInt((lastPoint.y + preLastPoint.y + prePreLastPoint.y) / 3));
+        StartCoroutine(FloodFillCorot(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y)));
+        //FloodFill(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y));
+        tex.Apply();
+        return;
+        var listToClear = new List<Vector3>();
+        for (int i = 0; i < points.Count; i++)
+        {
+            var newList = new List<Vector3>();
+            newList.AddRange(points);
+            newList.Remove(newList[i]);
+            if (polyCheck(newList.ToArray(), points[i]))
+            { 
+                listToClear.Add(points[i]);
+                tex.SetPixel(Mathf.RoundToInt(points[i].x),Mathf.RoundToInt(points[i].y), Color.red);
+            }
+        }
+        tex.Apply();
+        foreach(var item in listToClear)
+            points.RemoveAll(vector3 => vector3 == item);
+    }
+
+    private IEnumerator FloodFillCorot(int x, int y)
+    {
+        var color = tex.GetPixel(x, y);
+        //if (map[x][y] == 33)
+        //return;
+        //map[x][y
+        if (color == Color.green || color == Color.magenta || color == Color.black || x < 0 || x >= texSize || y < 0 || y >= texSize)
+            yield break;
+        tex.SetPixel(x, y, Color.green);
+        tex.Apply();
+        yield return new WaitForSeconds(0.025f);
+        StartCoroutine(FloodFillCorot(x + 1, y));
+        StartCoroutine(FloodFillCorot(x - 1, y));
+        StartCoroutine(FloodFillCorot(x, y + 1));
+        StartCoroutine(FloodFillCorot(x, y - 1));
+    }
+
+    public void FloodFill(int x, int y)
+    {
+        var color = tex.GetPixel(x, y);
+        //if (map[x][y] == 33)
+        //return;
+        //map[x][y
+        if (color == Color.green)
+            return;
+        tex.SetPixel(x, y, Color.green);
+        tex.Apply();
+        FloodFill(x + 1, y);
+        FloodFill(x - 1, y);
+        FloodFill(x, y + 1);
+        FloodFill(x, y - 1);
+    }
+
+    private void CreateMewBorder()
+    {
+        foreach (var item in myPoins)
+        {
+            map[(int)item.x][(int)item.y] = 33;
         }
 
-        oldpos = gridpos;
-	}
+        myPoins.Clear();
+    }
 
+    private void CheckForBorders()
+    {
+        var firstPoint = points.First();
+        var lastPoint = points.Last();
 
-	public void FloodFill(byte[][] map, int startX, int startY, byte XtoValue, byte YtoValue)
-	{
-		for (int x = startX; x < startX + XtoValue; x++) {
-			for (int y = startY; y < YtoValue; y++) {
-				tex.SetPixel(x, y, Color.green);
-			}
-		}
-	}
+        if (map[(int)lastPoint.x][(int)lastPoint.y] == 33)
+        {
+            var tmpY = lastPoint.y;
 
-    //else if (map[x][y] == 1 && map[x][y+1] == 1 && map[x][y - 1] == 1)
-    //{
-    //    tmp.Add(map[x][y]);
-    //}
-
-    List<byte> tmp = new List<byte>();
-
-    bool git = false;
-	IEnumerator AutiFloodFill()
-	{
-		Debug.Log("!!");
-		bool git = false;
-		bool draw = false;
-		for (int x = 1; x < texSize; x++) {
-			for (int y = 1; y < texSize; y++) {
-
-
-                if(map[x][y-1] == 0 && map[x][y] == 1 && map[x][y + 1] == 1)
+            if (lastPoint.x == texSize - 1 || lastPoint.x == 0)
+            {
+                //   FIX Y
+                if (lastPoint.y < firstPoint.y || lastPoint.y > firstPoint.y)
                 {
-                    tmp.Add(map[x][y]);
+
+                    var dir = firstPoint.y - lastPoint.y > 0 ? 1 : -1;
+                    while (tmpY > 0 && tmpY < texSize || map[(int)lastPoint.x][(int)tmpY] != 33)
+                    {
+                        tmpY += dir;
+                        tex.SetPixel((int)lastPoint.x, (int)tmpY, Color.green);
+                        if (map[(int)tmpY][(int)lastPoint.x] != 33)
+                            if (map[(int)lastPoint.x][(int)tmpY] != 33)
+                            {
+                                points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
+                                break;
+                            }
+                    }
+                    points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
                 }
-                else if (map[x][y - 1] == 0 && map[x][y] == 1 && map[x][y + 1] == 0)
+            }
+            if (lastPoint.y == texSize - 1 || lastPoint.y == 0)
+            {
+
+                //  FIX X
+                if (lastPoint.x < firstPoint.x || lastPoint.x > firstPoint.x)
                 {
-                    tmp.Add(map[x][y]);
+                    var tmpX = lastPoint.x;
+                    var dir = firstPoint.x - lastPoint.x > 0 ? 1 : -1;
+                    while (tmpX > 0 && tmpX < texSize || map[(int)tmpX][(int)lastPoint.y] != 33)
+                    {
+                        tmpX += dir;
+                        tex.SetPixel((int)tmpX, (int)lastPoint.y, Color.green);
+                        if (map[(int)tmpY][(int)lastPoint.x] != 33)
+                            if (map[(int)lastPoint.x][(int)tmpY] != 33)
+                            {
+                                points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
+                                break;
+                            }
+                    }
+                    points.Add(new Vector3(Mathf.RoundToInt(tmpX), Mathf.RoundToInt(lastPoint.y)));
                 }
-                else if (map[x][y - 1] == 1 && map[x][y] == 1 && map[x][y + 1] == 0)
-                {
-                    tmp.Add(map[x][y]);
-                }
+            }
+        }
+    }
 
+  
 
-
-
-                if (tmp.Count % 2 == 0)
-                {
-                    draw = true;
-                }
-                else
-                    draw = false;
-
-                if (draw)
-				{
-					tex.SetPixel(x, y, Color.green);
-					tex.Apply();
-				}
-
-			}
-            tmp.Clear();
-            draw = false;
-		}
-	    start = false;
-
-
-		yield return null;
-	}
-
+    public bool polyCheck(Vector3[] p, Vector3 v)
+    {
+        int j = p.Length - 1;
+        bool c = false;
+        for (int i = 0; i < p.Length; j = i++)
+            c ^= p[i].y > v.y ^ p[j].y > v.y && v.x < (p[j].x - p[i].x) * (v.y - p[i].y) / (p[j].y - p[i].y) + p[i].x;
+        return c;
+    }
 }
-//if(draw  && map[x][y] == 1 && map[x][y +1] != 1)
-//{
-//	draw = false;
-//}
-//else if(map[x][y] == 1)
-//{
-//	draw = true;
-//}
-
-
-
-
-//if(draw && map[x][y+1] != 1)
-//{
-//	draw =false;
-//}
-//else
-//{
-//	draw =true;
-//}
