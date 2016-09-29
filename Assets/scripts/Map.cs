@@ -6,13 +6,8 @@ using System;
 
 public class Map : MonoBehaviour
 {
-
-    private int xSize = 0;
-    private int ySize = 0;
-
     public int DensityPixels = 10;
     public GameObject enemy;
-    public GameObject enemy2;
     public Camera cameraOther;
 
     public Transform target;
@@ -21,6 +16,12 @@ public class Map : MonoBehaviour
     private byte[][] map;
 
     private float speed = 25.0f;
+
+
+    private int xSize = 0;
+    private int ySize = 0;
+
+
 
     private Vector3 pos;
     private Vector3 oldpos;
@@ -84,6 +85,8 @@ public class Map : MonoBehaviour
         float heightOtherCamera = 2f * cameraOther.orthographicSize;
         float widthOtherCamera = heightOtherCamera * cameraOther.aspect;
         cameraOther.transform.position = new Vector3(cameraOther.transform.position.x + widthOtherCamera / 2, cameraOther.transform.position.y + heightOtherCamera / 2, -10);
+
+        Debug.Log(xSize + "   " + ySize);
     }
 
     bool start = false;
@@ -166,12 +169,10 @@ public class Map : MonoBehaviour
                 map[x_x][y_y] = 1;
                 myPoins.Add(new Vector2(x_x, y_y));
             }
-            ////    if (cur != 33)
-            //     {
+
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
             tex.Apply();
-            //  }
-
+   
             if (cur == 1) // самі в себе
             {
                 //  Restart();
@@ -181,10 +182,9 @@ public class Map : MonoBehaviour
     }
 
     Vector2 directionEnemy = new Vector3(1, 1,0);
-    float speedEnemy = 10;
+    float speedEnemy = 20;
     void MoveEnemy()
     {
-      //  return;
         if (!load) return;
 
         enemy.transform.Translate(directionEnemy * Time.deltaTime * speedEnemy, Space.World);
@@ -192,17 +192,23 @@ public class Map : MonoBehaviour
         int x_x = (Mathf.RoundToInt(enemy.transform.position.x));
         int y_y = (Mathf.RoundToInt(enemy.transform.position.y));
 
-        Debug.Log(x_x + "  " + y_y);
-
-     //   target.GetComponent<Renderer>().material.mainTexture.
-
-        //enemy2.transform.position = new Vector3(enemy.transform.position.x / xSize * 5, enemy.transform.position.y / ySize * 5, 0);
+        if (map[x_x][y_y] == 1)
+        {
+            Restart();
+        }
 
         if (map[x_x][y_y] == 33)
         {
-            directionEnemy = new Vector2(directionEnemy.x * -1, directionEnemy.y * -1);
+            if ((y_y + 1 < ySize - 1 && map[x_x][y_y + 1] == 33) && (y_y - 1 > 0 && map[x_x][y_y - 1] == 33))
+            {
+                directionEnemy = new Vector2(directionEnemy.x * -1, directionEnemy.y);
+            }
+            else if((x_x + 1 < xSize - 1 && map[x_x + 1][y_y] == 33) && (x_x - 1 > 0 && map[x_x - 1][y_y] == 33))
+            {
+                directionEnemy = new Vector2(directionEnemy.x, directionEnemy.y * -1);
+            }
         }
-     
+  
     }
 
     bool one = false;
@@ -218,7 +224,9 @@ public class Map : MonoBehaviour
         //if (one)
       //  {
             CheckPoins();
-      //  }
+        CreateMewBorder();
+
+        //  }
         yield break;
         yield return StartCoroutine(WaitForKeyPress());
 
@@ -236,7 +244,7 @@ public class Map : MonoBehaviour
 
         //  points.Clear();
 
-        //     CreateMewBorder();
+             CreateMewBorder();
 
         yield return null;
     }
@@ -385,4 +393,8 @@ public class Map : MonoBehaviour
             c ^= p[i].y > v.y ^ p[j].y > v.y && v.x < (p[j].x - p[i].x) * (v.y - p[i].y) / (p[j].y - p[i].y) + p[i].x;
         return c;
     }
+}
+public enum Value
+{
+    border = (byte)33
 }
