@@ -30,6 +30,12 @@ public class Map : MonoBehaviour
         }
         tex = new Texture2D(texSize, texSize);
 
+        var height = Camera.main.orthographicSize * 2.0;
+        var width = height * Screen.width / Screen.height;
+        target.transform.localScale = new Vector3((float)width, (float)height, 0.1f);
+
+
+
         target.GetComponent<Renderer>().material.mainTexture = tex;
         target.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
 
@@ -76,13 +82,14 @@ public class Map : MonoBehaviour
     private bool first = true;
     void Update()
     {
+        //return;
         if (Input.GetKeyDown(KeyCode.U))
         {
             StartCoroutine(AutiFloodFill());
         }
 
-        float moveX = Input.GetAxisRaw("Horizontal") * speed * -1f;
-        float moveY = Input.GetAxisRaw("Vertical") * speed * -1f;
+        float moveX = Input.GetAxisRaw("Horizontal") * speed ;
+        float moveY = Input.GetAxisRaw("Vertical") * speed;
 
         if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
         {
