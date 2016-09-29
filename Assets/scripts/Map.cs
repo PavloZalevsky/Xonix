@@ -7,8 +7,13 @@ using System;
 public class Map : MonoBehaviour
 {
 
-    public int xSize = 0; 
-    public int ySize = 0;
+    private int xSize = 0;
+    private int ySize = 0;
+
+    public int DensityPixels = 10;
+    public GameObject enemy;
+    public GameObject enemy2;
+    public Camera camOther;
 
     public Transform target;
    // public int texSize = 128;
@@ -23,20 +28,23 @@ public class Map : MonoBehaviour
 
     private Vector3 startPos;
 
+    private bool load = false;
+
     void Start()
     {
+        var height = Camera.main.orthographicSize * 2.0;
+        var width = height * Screen.width / Screen.height;
+        target.transform.localScale = new Vector3((float)width, (float)height, 0.1f);
+
+        xSize = Mathf.RoundToInt((float)width * DensityPixels);
+        ySize = Mathf.RoundToInt((float)height * DensityPixels);
+
         map = new byte[xSize][];
         for (int i = 0; i < map.Length; i++)
         {
             map[i] = new byte[ySize];
         }
         tex = new Texture2D(xSize, ySize);
-
-        var height = Camera.main.orthographicSize * 2.0;
-        var width = height * Screen.width / Screen.height;
-        target.transform.localScale = new Vector3((float)width, (float)height, 0.1f);
-
-
 
         target.GetComponent<Renderer>().material.mainTexture = tex;
         target.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
@@ -58,12 +66,14 @@ public class Map : MonoBehaviour
 
         tex.Apply();
         pos = new Vector3(xSize / 2, 0, 0);
+        enemy.transform.position = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
         transform.position = pos;
         oldpos = -pos;
         direction = Vector2.zero;
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
+        load = true;
     }
 
     bool start = false;
@@ -84,6 +94,7 @@ public class Map : MonoBehaviour
     private bool first = true;
     void Update()
     {
+        MoveEnemy();
         //return;
         if (Input.GetKeyDown(KeyCode.U))
         {
@@ -157,6 +168,31 @@ public class Map : MonoBehaviour
             }
         }
         oldpos = gridpos;
+    }
+
+    Vector2 directionEnemy = new Vector3(1, 1,0);
+    float speedEnemy = 10;
+    void MoveEnemy()
+    {
+      //  return;
+        if (!load) return;
+
+        enemy.transform.Translate(directionEnemy * Time.deltaTime * speedEnemy, Space.World);
+
+        int x_x = (Mathf.RoundToInt(enemy.transform.position.x));
+        int y_y = (Mathf.RoundToInt(enemy.transform.position.y));
+
+       // Debug.Log(x_x + "  " + y_y);
+
+     //   target.GetComponent<Renderer>().material.mainTexture.
+
+        //enemy2.transform.position = new Vector3(enemy.transform.position.x / xSize * 5, enemy.transform.position.y / ySize * 5, 0);
+
+        if (map[x_x][y_y] == 33)
+        {
+            directionEnemy = new Vector2(directionEnemy.x * -1, directionEnemy.y * -1);
+        }
+     
     }
 
     bool one = false;
@@ -330,8 +366,6 @@ public class Map : MonoBehaviour
             }
         }
     }
-
-  
 
     public bool polyCheck(Vector3[] p, Vector3 v)
     {
