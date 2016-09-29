@@ -57,11 +57,11 @@ public class Map : MonoBehaviour
         }
 
         tex.Apply();
-        pos = transform.position;
+        pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
+        transform.position = pos;
         oldpos = -pos;
         direction = Vector2.zero;
-        transform.position = Vector3.zero;
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
     }
@@ -90,7 +90,7 @@ public class Map : MonoBehaviour
             StartCoroutine(AutiFloodFill());
         }
 
-        float moveX = Input.GetAxisRaw("Horizontal") * speed ;
+        float moveX = Input.GetAxisRaw("Horizontal") * speed;
         float moveY = Input.GetAxisRaw("Vertical") * speed;
 
         if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
@@ -117,6 +117,7 @@ public class Map : MonoBehaviour
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
+
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
         direction = new Vector2(moveX, moveY);
 
@@ -137,7 +138,7 @@ public class Map : MonoBehaviour
             {
                 //   Debug.Log("33");
                 //if(!start)
-                // StartCoroutine(AutiFloodFill());
+                //StartCoroutine(AutiFloodFill());
             }
             if (cur != 33) // тут ми були
             {
@@ -166,17 +167,12 @@ public class Map : MonoBehaviour
         tex.SetPixel(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Color.magenta);
         tex.Apply();
 
-        yield return null;
-        yield return null;
-        yield return null;
-        yield return null;
-
 
         //CheckForBorders();
         //if (one)
-        {
+      //  {
             CheckPoins();
-        }
+      //  }
         yield break;
         yield return StartCoroutine(WaitForKeyPress());
 
