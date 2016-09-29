@@ -13,7 +13,7 @@ public class Map : MonoBehaviour
     public int DensityPixels = 10;
     public GameObject enemy;
     public GameObject enemy2;
-    public Camera camOther;
+    public Camera cameraOther;
 
     public Transform target;
    // public int texSize = 128;
@@ -32,12 +32,7 @@ public class Map : MonoBehaviour
 
     void Start()
     {
-        var height = Camera.main.orthographicSize * 2.0;
-        var width = height * Screen.width / Screen.height;
-        target.transform.localScale = new Vector3((float)width, (float)height, 0.1f);
-
-        xSize = Mathf.RoundToInt((float)width * DensityPixels);
-        ySize = Mathf.RoundToInt((float)height * DensityPixels);
+        CameraSettings();
 
         map = new byte[xSize][];
         for (int i = 0; i < map.Length; i++)
@@ -74,6 +69,21 @@ public class Map : MonoBehaviour
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         load = true;
+    }
+
+    void CameraSettings()
+    {
+        float heightMainCamera = Camera.main.orthographicSize * 2f;
+        float widtMainCamerh = heightMainCamera * Screen.width / Screen.height;
+        target.transform.localScale = new Vector3(widtMainCamerh, heightMainCamera, 0.1f);
+
+        xSize = Mathf.RoundToInt(widtMainCamerh * DensityPixels);
+        ySize = Mathf.RoundToInt(heightMainCamera * DensityPixels);
+
+        cameraOther.orthographicSize = cameraOther.orthographicSize * DensityPixels;
+        float heightOtherCamera = 2f * cameraOther.orthographicSize;
+        float widthOtherCamera = heightOtherCamera * cameraOther.aspect;
+        cameraOther.transform.position = new Vector3(cameraOther.transform.position.x + widthOtherCamera / 2, cameraOther.transform.position.y + heightOtherCamera / 2, -10);
     }
 
     bool start = false;
@@ -182,7 +192,7 @@ public class Map : MonoBehaviour
         int x_x = (Mathf.RoundToInt(enemy.transform.position.x));
         int y_y = (Mathf.RoundToInt(enemy.transform.position.y));
 
-       // Debug.Log(x_x + "  " + y_y);
+        Debug.Log(x_x + "  " + y_y);
 
      //   target.GetComponent<Renderer>().material.mainTexture.
 
