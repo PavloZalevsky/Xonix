@@ -7,9 +7,11 @@ using System;
 public class Map : MonoBehaviour
 {
 
+    public int xSize = 0; 
+    public int ySize = 0;
 
     public Transform target;
-    public int texSize = 128;
+   // public int texSize = 128;
     private Texture2D tex;
     private byte[][] map;
 
@@ -23,12 +25,12 @@ public class Map : MonoBehaviour
 
     void Start()
     {
-        map = new byte[texSize][];
+        map = new byte[xSize][];
         for (int i = 0; i < map.Length; i++)
         {
-            map[i] = new byte[texSize];
+            map[i] = new byte[ySize];
         }
-        tex = new Texture2D(texSize, texSize);
+        tex = new Texture2D(xSize, ySize);
 
         var height = Camera.main.orthographicSize * 2.0;
         var width = height * Screen.width / Screen.height;
@@ -39,14 +41,14 @@ public class Map : MonoBehaviour
         target.GetComponent<Renderer>().material.mainTexture = tex;
         target.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
 
-        for (int y = 0; y < texSize; y++)
+        for (int x = 0; x < xSize; x++)
         {
-            for (int x = 0; x < texSize; x++)
+            for (int y = 0; y < ySize; y++)
             {
                 map[x][y] = 0;
                 tex.SetPixel(x, y, Color.blue);
 
-                if (x == 0 || y == 0 || x == texSize - 1 || y == texSize - 1)
+                if (x == 0 || y == 0 || x == xSize - 1 || y == ySize - 1)
                 {
                     map[x][y] = 33; // border
                     tex.SetPixel(x, y, Color.gray);
@@ -120,7 +122,7 @@ public class Map : MonoBehaviour
 
         //if (gridpos == oldpos)
         //return;
-        if (gridpos.x < 0 || gridpos.x >= texSize || gridpos.y < 0 || gridpos.y >= texSize)
+        if (gridpos.x < 0 || gridpos.x >= xSize || gridpos.y < 0 || gridpos.y >= ySize)
             return;
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
@@ -179,8 +181,8 @@ public class Map : MonoBehaviour
         yield return StartCoroutine(WaitForKeyPress());
 
         one = true;
-        for (int y = 0; y < texSize; y++)
-            for (int x = 0; x < texSize; x++)
+        for (int y = 0; y < xSize; y++)
+            for (int x = 0; x < ySize; x++)
             {
                 if (polyCheck(points.ToArray(), new Vector3(x, y, 0)))
                 {
@@ -241,7 +243,7 @@ public class Map : MonoBehaviour
         //if (map[x][y] == 33)
         //return;
         //map[x][y
-        if (color == Color.green || color == Color.magenta || color == Color.black || x < 0 || x >= texSize || y < 0 || y >= texSize)
+        if (color == Color.green || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
             yield break;
         tex.SetPixel(x, y, Color.green);
         tex.Apply();
@@ -287,14 +289,14 @@ public class Map : MonoBehaviour
         {
             var tmpY = lastPoint.y;
 
-            if (lastPoint.x == texSize - 1 || lastPoint.x == 0)
+            if (lastPoint.x == xSize - 1 || lastPoint.x == 0)
             {
                 //   FIX Y
                 if (lastPoint.y < firstPoint.y || lastPoint.y > firstPoint.y)
                 {
 
                     var dir = firstPoint.y - lastPoint.y > 0 ? 1 : -1;
-                    while (tmpY > 0 && tmpY < texSize || map[(int)lastPoint.x][(int)tmpY] != 33)
+                    while (tmpY > 0 && tmpY < ySize || map[(int)lastPoint.x][(int)tmpY] != 33)
                     {
                         tmpY += dir;
                         tex.SetPixel((int)lastPoint.x, (int)tmpY, Color.green);
@@ -308,7 +310,7 @@ public class Map : MonoBehaviour
                     points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
                 }
             }
-            if (lastPoint.y == texSize - 1 || lastPoint.y == 0)
+            if (lastPoint.y == ySize - 1 || lastPoint.y == 0)
             {
 
                 //  FIX X
@@ -316,7 +318,7 @@ public class Map : MonoBehaviour
                 {
                     var tmpX = lastPoint.x;
                     var dir = firstPoint.x - lastPoint.x > 0 ? 1 : -1;
-                    while (tmpX > 0 && tmpX < texSize || map[(int)tmpX][(int)lastPoint.y] != 33)
+                    while (tmpX > 0 && tmpX < xSize || map[(int)tmpX][(int)lastPoint.y] != 33)
                     {
                         tmpX += dir;
                         tex.SetPixel((int)tmpX, (int)lastPoint.y, Color.green);
