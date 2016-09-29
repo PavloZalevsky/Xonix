@@ -7,13 +7,15 @@ using System;
 public class Map : MonoBehaviour
 {
     public int DensityPixels = 10;
-    public GameObject enemy;
+    public Enemy enemy;
     public Camera cameraOther;
 
     public Transform target;
-   // public int texSize = 128;
+    // public int texSize = 128;
     private Texture2D tex;
     private byte[][] map;
+    private List<Enemy> enemies = new List<Enemy>();
+
 
     private float speed = 25.0f;
 
@@ -62,14 +64,28 @@ public class Map : MonoBehaviour
 
         tex.Apply();
         pos = new Vector3(xSize / 2, 0, 0);
-        enemy.transform.position = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
         transform.position = pos;
         oldpos = -pos;
         direction = Vector2.zero;
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
+
+
+        SpawnEnemies();
         load = true;
+    }
+
+    private void SpawnEnemies()
+    {
+        //TODO//
+        int countEnemy = 5; // UnityEngine.Random.Range(1, 5);
+        for (int i = 0; i < countEnemy; i++)
+        {
+            var obj = Instantiate(Resources.Load("enemy") as GameObject,
+                  new Vector3(UnityEngine.Random.Range(2, xSize - 2), UnityEngine.Random.Range(2, ySize - 2), 0), new Quaternion(0, 0, 0, 0)) as GameObject;
+            enemies.Add(obj.GetComponent<Enemy>());
+        }
     }
 
     void CameraSettings()
@@ -172,7 +188,7 @@ public class Map : MonoBehaviour
 
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
             tex.Apply();
-   
+
             if (cur == 1) // самі в себе
             {
                 //  Restart();
@@ -181,34 +197,46 @@ public class Map : MonoBehaviour
         oldpos = gridpos;
     }
 
-    Vector2 directionEnemy = new Vector3(1, 1,0);
-    float speedEnemy = 20;
+
     void MoveEnemy()
     {
+        //TODO//
         if (!load) return;
 
-        enemy.transform.Translate(directionEnemy * Time.deltaTime * speedEnemy, Space.World);
-
-        int x_x = (Mathf.RoundToInt(enemy.transform.position.x));
-        int y_y = (Mathf.RoundToInt(enemy.transform.position.y));
-
-        if (map[x_x][y_y] == 1)
+        foreach (var ene in enemies)
         {
-            Restart();
-        }
+            ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
 
-        if (map[x_x][y_y] == 33)
-        {
-            if ((y_y + 1 < ySize - 1 && map[x_x][y_y + 1] == 33) && (y_y - 1 > 0 && map[x_x][y_y - 1] == 33))
+            int x_x = (Mathf.RoundToInt(ene.transform.position.x));
+            int y_y = (Mathf.RoundToInt(ene.transform.position.y));
+
+            if (x_x < 0 || y_y < 0)
             {
-                directionEnemy = new Vector2(directionEnemy.x * -1, directionEnemy.y);
+                Debug.LogError(x_x + "   " + y_y);
+                return;
             }
-            else if((x_x + 1 < xSize - 1 && map[x_x + 1][y_y] == 33) && (x_x - 1 > 0 && map[x_x - 1][y_y] == 33))
+
+            if (map[x_x][y_y] == 1)
             {
-                directionEnemy = new Vector2(directionEnemy.x, directionEnemy.y * -1);
+               // Restart();
+            }
+
+            if (map[x_x][y_y] == 33)
+            {
+                if ((y_y + 1 < ySize - 1 && map[x_x][y_y + 1] == 33) && (y_y - 1 > 0 && map[x_x][y_y - 1] == 33))
+                {
+                    ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y);
+                }
+                else if ((x_x + 1 < xSize - 1 && map[x_x + 1][y_y] == 33) && (x_x - 1 > 0 && map[x_x - 1][y_y] == 33))
+                {
+                    ene.directionEnemy = new Vector2(ene.directionEnemy.x, ene.directionEnemy.y * -1);
+                }
+                else
+                {
+                    ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
+                }
             }
         }
-  
     }
 
     bool one = false;
@@ -222,8 +250,8 @@ public class Map : MonoBehaviour
 
         //CheckForBorders();
         //if (one)
-      //  {
-            CheckPoins();
+        //  {
+        CheckPoins();
         CreateMewBorder();
 
         //  }
@@ -244,7 +272,7 @@ public class Map : MonoBehaviour
 
         //  points.Clear();
 
-             CreateMewBorder();
+        CreateMewBorder();
 
         yield return null;
     }
@@ -277,13 +305,13 @@ public class Map : MonoBehaviour
             newList.AddRange(points);
             newList.Remove(newList[i]);
             if (polyCheck(newList.ToArray(), points[i]))
-            { 
+            {
                 listToClear.Add(points[i]);
-                tex.SetPixel(Mathf.RoundToInt(points[i].x),Mathf.RoundToInt(points[i].y), Color.red);
+                tex.SetPixel(Mathf.RoundToInt(points[i].x), Mathf.RoundToInt(points[i].y), Color.red);
             }
         }
         tex.Apply();
-        foreach(var item in listToClear)
+        foreach (var item in listToClear)
             points.RemoveAll(vector3 => vector3 == item);
     }
 
