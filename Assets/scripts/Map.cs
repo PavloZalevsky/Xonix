@@ -191,7 +191,7 @@ public class Map : MonoBehaviour
             {
                 //   Debug.Log("33");
                 //if(!start)
-                //StartCoroutine(AutiFloodFill());
+                StartCoroutine(AutiFloodFill());
             }
             if (cur != 33) // тут ми були
             {
@@ -233,15 +233,15 @@ public class Map : MonoBehaviour
             {
                 x_x = 0;
             }
-            else if(x_x > xSize - 1)
+            if(x_x > xSize - 1)
             {
                 x_x = xSize - 1;
             }
-            else if(y_y <0)
+            if(y_y < 0)
             {
                 y_y = 0;
             }
-            else if (y_y > ySize - 1)
+            if (y_y > ySize - 1)
             {
                 y_y = ySize - 1;
             }
