@@ -15,7 +15,7 @@ public class Map : MonoBehaviour
     private Texture2D tex;
     private byte[][] map;
 
-    public  List<Enemy> PoolEnemy = new List<Enemy>();
+    public List<Enemy> PoolEnemy = new List<Enemy>();
     private List<Enemy> enemies = new List<Enemy>();
 
 
@@ -28,12 +28,15 @@ public class Map : MonoBehaviour
 
 
     private Vector3 pos;
-    private Vector3 oldpos;
     private Vector3 gridpos;
 
     private Vector3 startPos;
 
     private bool load = false;
+
+    private int allPixel = 0;
+    private int paintedPixels = 0;
+
 
     void OnEnable()
     {
@@ -69,12 +72,12 @@ public class Map : MonoBehaviour
         }
 
         tex.Apply();
+        paintedPixels = 0;
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
         transform.position = pos;
         Player.position = new Vector3(pos.x + 0.5f, pos.y);
 
-        oldpos = -pos;
         direction = Vector2.zero;
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
@@ -117,7 +120,9 @@ public class Map : MonoBehaviour
         float widthOtherCamera = heightOtherCamera * cameraOther.aspect;
         cameraOther.transform.position = new Vector3(cameraOther.transform.position.x + widthOtherCamera / 2, cameraOther.transform.position.y + heightOtherCamera / 2, -10);
 
-        Debug.Log(xSize + "   " + ySize);
+        allPixel = xSize * ySize;
+
+        Debug.Log(xSize + "   " + ySize + "  AllPixel " + allPixel);
     }
 
 
@@ -133,16 +138,13 @@ public class Map : MonoBehaviour
 
     private List<Vector2> myPoins = new List<Vector2>();
 
-    private bool isHorizontal = true;
-
-    private bool first = true;
     void Update()
     {
         MoveEnemy();
         //return;
         if (Input.GetKeyDown(KeyCode.U))
         {
-            StartCoroutine(AutiFloodFill());
+            StartCoroutine(AutoFloodFill());
         }
 
         float moveX = Input.GetAxisRaw("Horizontal") * speed;
@@ -187,33 +189,29 @@ public class Map : MonoBehaviour
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
 
-        if (gridpos != oldpos)
+
+        int x_x = (Mathf.RoundToInt(gridpos.x));
+        int y_y = (Mathf.RoundToInt(gridpos.y));
+        byte cur = map[x_x][y_y];
+
+        if (cur == 33) // В ЗАБОР
         {
-            int x_x = (Mathf.RoundToInt(gridpos.x));
-            int y_y = (Mathf.RoundToInt(gridpos.y));
-            byte cur = map[x_x][y_y];
-
-            if (cur == 33) // В ЗАБОР
-            {
-                //   Debug.Log("33");
-                //if(!start)
-                StartCoroutine(AutiFloodFill());
-            }
-            if (cur != 33) // тут ми були
-            {
-                map[x_x][y_y] = 1;
-                myPoins.Add(new Vector2(x_x, y_y));
-            }
-
-            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
-            tex.Apply();
-
-            if (cur == 1) // самі в себе
-            {
-                //  Restart();
-            }
+            StartCoroutine(AutoFloodFill());
         }
-        oldpos = gridpos;
+        if (cur != 33) // тут ми були
+        {
+            map[x_x][y_y] = 1;
+            myPoins.Add(new Vector2(x_x, y_y));
+        }
+
+        tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+        tex.Apply();
+
+        if (cur == 1) // самі в себе
+        {
+            //  Restart();
+        }
+
     }
 
 
@@ -235,15 +233,15 @@ public class Map : MonoBehaviour
             //    //    return;
             //}
 
-            if(x_x < 0)
+            if (x_x < 0)
             {
                 x_x = 0;
             }
-            if(x_x > xSize - 1)
+            if (x_x > xSize - 1)
             {
                 x_x = xSize - 1;
             }
-            if(y_y < 0)
+            if (y_y < 0)
             {
                 y_y = 0;
             }
@@ -290,7 +288,7 @@ public class Map : MonoBehaviour
             if (map[x_x][y_y] == 1)
             {
                 Restart();
-                break;     
+                break;
             }
 
             //map[x_x][y_y] = 2;
@@ -309,20 +307,20 @@ public class Map : MonoBehaviour
 
     bool one = false;
 
-    IEnumerator AutiFloodFill()
+    IEnumerator AutoFloodFill()
     {
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         tex.SetPixel(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Color.magenta);
         tex.Apply();
 
-
-        //CheckForBorders();
-        //if (one)
-        //  {
         CheckPoins();
         CreateMewBorder();
+        Debug.Log(paintedPixels + "    " + (paintedPixels /(allPixel / 100)));
 
-        //  }
+
+
+
+
         yield break;
         yield return StartCoroutine(WaitForKeyPress());
 
@@ -389,10 +387,13 @@ public class Map : MonoBehaviour
         //if (map[x][y] == 33)
         //return;
         //map[x][y
+
         if (color == Color.green || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
             yield break;
         tex.SetPixel(x, y, Color.green);
         tex.Apply();
+        paintedPixels++;
+
         yield return new WaitForSeconds(0.025f);
         StartCoroutine(FloodFillCorot(x + 1, y));
         StartCoroutine(FloodFillCorot(x - 1, y));
