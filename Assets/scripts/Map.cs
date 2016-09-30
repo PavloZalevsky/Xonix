@@ -91,11 +91,11 @@ public class Map : MonoBehaviour
         }
         enemies.Clear();
 
-        int countEnemy = 6;// UnityEngine.Random.Range(2, 6);
+        int countEnemy = UnityEngine.Random.Range(2, 6);
 
         for (int i = 0; i < countEnemy; i++)
         {
-            PoolEnemy[i].transform.position = new Vector3(UnityEngine.Random.Range(4, xSize - 4), UnityEngine.Random.Range(4, ySize - 4), 0);
+            PoolEnemy[i].transform.position = new Vector3(UnityEngine.Random.Range(10, xSize - 10), UnityEngine.Random.Range(10, ySize - 10), 0);
             PoolEnemy[i].gameObject.SetActive(true);
             enemies.Add(PoolEnemy[i]);
         }
@@ -275,9 +275,11 @@ public class Map : MonoBehaviour
                 {
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
                 }
+                ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
+
             }
 
-         
+
 
             if (map[x_x][y_y] == 1)
             {
