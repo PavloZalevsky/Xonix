@@ -14,6 +14,8 @@ public class Map : MonoBehaviour
     // public int texSize = 128;
     private Texture2D tex;
     private byte[][] map;
+
+    public  List<Enemy> PoolEnemy = new List<Enemy>();
     private List<Enemy> enemies = new List<Enemy>();
 
 
@@ -33,10 +35,14 @@ public class Map : MonoBehaviour
 
     private bool load = false;
 
-    void Start()
+    void OnEnable()
     {
         CameraSettings();
+    }
 
+
+    void Start()
+    {
         map = new byte[xSize][];
         for (int i = 0; i < map.Length; i++)
         {
@@ -79,12 +85,19 @@ public class Map : MonoBehaviour
     private void SpawnEnemies()
     {
         //TODO//
-        int countEnemy = 5; // UnityEngine.Random.Range(1, 5);
+        foreach (var item in PoolEnemy)
+        {
+            item.gameObject.SetActive(false);
+        }
+        enemies.Clear();
+
+        int countEnemy = 6;// UnityEngine.Random.Range(2, 6);
+
         for (int i = 0; i < countEnemy; i++)
         {
-            var obj = Instantiate(Resources.Load("enemy") as GameObject,
-                  new Vector3(UnityEngine.Random.Range(2, xSize - 2), UnityEngine.Random.Range(2, ySize - 2), 0), new Quaternion(0, 0, 0, 0)) as GameObject;
-            enemies.Add(obj.GetComponent<Enemy>());
+            PoolEnemy[i].transform.position = new Vector3(UnityEngine.Random.Range(4, xSize - 4), UnityEngine.Random.Range(4, ySize - 4), 0);
+            PoolEnemy[i].gameObject.SetActive(true);
+            enemies.Add(PoolEnemy[i]);
         }
     }
 
@@ -105,12 +118,12 @@ public class Map : MonoBehaviour
         Debug.Log(xSize + "   " + ySize);
     }
 
-    bool start = false;
 
     private Vector2 direction;
 
     private void Restart()
     {
+        load = false;
         Start();
     }
 
@@ -205,21 +218,48 @@ public class Map : MonoBehaviour
 
         foreach (var ene in enemies)
         {
-            ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
 
             int x_x = (Mathf.RoundToInt(ene.transform.position.x));
             int y_y = (Mathf.RoundToInt(ene.transform.position.y));
 
-            if (x_x < 0 || y_y < 0)
+
+            //if (x_x < 0 || y_y < 0 || x_x > xSize - 1 || y_y > ySize - 1)
+            //{
+            //    Debug.LogError(x_x + "   " + y_y);
+            //    //    return;
+            //}
+
+            if(x_x < 0)
             {
-                Debug.LogError(x_x + "   " + y_y);
-                return;
+                x_x = 0;
+            }
+            else if(x_x > xSize - 1)
+            {
+                x_x = xSize - 1;
+            }
+            else if(y_y <0)
+            {
+                y_y = 0;
+            }
+            else if (y_y > ySize - 1)
+            {
+                y_y = ySize - 1;
             }
 
-            if (map[x_x][y_y] == 1)
-            {
-               // Restart();
-            }
+
+            //if (x_x > xSize || x_x < 0)
+            //{
+            //    ene.directionEnemy = new Vector2(ene.directionEnemy.x, ene.directionEnemy.y * -1);
+            //    continue;
+            //}
+            //else if(y_y > ySize || y_y < 0)
+            //{
+            //    ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y);
+            //    continue;
+
+            //}
+
+
 
             if (map[x_x][y_y] == 33)
             {
@@ -236,6 +276,26 @@ public class Map : MonoBehaviour
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
                 }
             }
+
+         
+
+            if (map[x_x][y_y] == 1)
+            {
+                Restart();
+                break;     
+            }
+
+            //map[x_x][y_y] = 2;
+
+            //if (ene.LastPoz != Vector2.zero)
+            //{
+            //    map[(int)ene.LastPoz.x][(int)ene.LastPoz.y] = ene.LastSumbl; 
+            //}
+
+            //ene.LastPoz = new Vector2(x_x, y_y);
+            //ene.LastSumbl = map[x_x][y_y];
+            ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
+
         }
     }
 

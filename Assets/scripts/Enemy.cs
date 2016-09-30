@@ -7,6 +7,9 @@ public class Enemy : MonoBehaviour {
     public Vector2 directionEnemy = new Vector3(1, 1, 0);
     [HideInInspector]
     public float speedEnemy = 20;
+    [HideInInspector]
+    public Vector2 LastPoz = Vector2.zero;
+    public byte LastSumbl = 100;
 
     //public Enemy(Vector3 position)
     //{
@@ -14,6 +17,6 @@ public class Enemy : MonoBehaviour {
     //}
     void OnEnable()
     {
-        speedEnemy = Random.Range(10, 40);
+        speedEnemy = Random.Range(10, 35);
     }
 }
