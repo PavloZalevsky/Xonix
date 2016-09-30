@@ -200,6 +200,7 @@ public class Map : MonoBehaviour
         }
         if (cur != 33) // тут ми були
         {
+            paintedPixels++;
             map[x_x][y_y] = 1;
             myPoins.Add(new Vector2(x_x, y_y));
         }
