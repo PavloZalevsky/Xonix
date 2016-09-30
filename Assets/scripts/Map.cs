@@ -7,7 +7,7 @@ using System;
 public class Map : MonoBehaviour
 {
     public int DensityPixels = 10;
-    public Enemy enemy;
+    public Transform Player;
     public Camera cameraOther;
 
     public Transform target;
@@ -72,6 +72,8 @@ public class Map : MonoBehaviour
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
         transform.position = pos;
+        Player.position = new Vector3(pos.x + 0.5f, pos.y);
+
         oldpos = -pos;
         direction = Vector2.zero;
         points.Clear();
@@ -171,7 +173,11 @@ public class Map : MonoBehaviour
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
 
+
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
+        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
+
+
         direction = new Vector2(moveX, moveY);
 
         //if (gridpos == oldpos)
