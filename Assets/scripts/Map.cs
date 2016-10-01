@@ -43,7 +43,6 @@ public class Map : MonoBehaviour
         CameraSettings();
     }
 
-
     void Start()
     {
         map = new byte[xSize][];
@@ -145,7 +144,7 @@ public class Map : MonoBehaviour
         //return;
         if (Input.GetKeyDown(KeyCode.U))
         {
-            StartCoroutine(AutoFloodFill());
+            AutoFloodFill();
         }
 
         float moveX = Input.GetAxisRaw("Horizontal") * speed;
@@ -180,13 +179,11 @@ public class Map : MonoBehaviour
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
         Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
 
-
         direction = new Vector2(moveX, moveY);
 
-        //if (gridpos == oldpos)
-        //return;
         if (gridpos.x < 0 || gridpos.x >= xSize || gridpos.y < 0 || gridpos.y >= ySize)
             return;
+
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
 
@@ -213,28 +210,17 @@ public class Map : MonoBehaviour
         {
             //  Restart();
         }
-
     }
-
 
     void MoveEnemy()
     {
-
         //TODO//
         if (!load) return;
 
         foreach (var ene in enemies)
         {
-
             int x_x = (Mathf.RoundToInt(ene.transform.position.x));
             int y_y = (Mathf.RoundToInt(ene.transform.position.y));
-
-
-            //if (x_x < 0 || y_y < 0 || x_x > xSize - 1 || y_y > ySize - 1)
-            //{
-            //    Debug.LogError(x_x + "   " + y_y);
-            //    //    return;
-            //}
 
             if (x_x < 0)
             {
@@ -252,21 +238,6 @@ public class Map : MonoBehaviour
             {
                 y_y = ySize - 1;
             }
-
-
-            //if (x_x > xSize || x_x < 0)
-            //{
-            //    ene.directionEnemy = new Vector2(ene.directionEnemy.x, ene.directionEnemy.y * -1);
-            //    continue;
-            //}
-            //else if(y_y > ySize || y_y < 0)
-            //{
-            //    ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y);
-            //    continue;
-
-            //}
-
-
 
             if (map[x_x][y_y] == 33)
             {
@@ -286,8 +257,6 @@ public class Map : MonoBehaviour
 
             }
 
-
-
             if (map[x_x][y_y] == 1)
             {
                 Restart();
@@ -304,13 +273,10 @@ public class Map : MonoBehaviour
             //ene.LastPoz = new Vector2(x_x, y_y);
             //ene.LastSumbl = map[x_x][y_y];
             ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
-
         }
     }
 
-    bool one = false;
-
-    IEnumerator AutoFloodFill()
+    void AutoFloodFill()
     {
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         tex.SetPixel(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Color.magenta);
@@ -319,43 +285,7 @@ public class Map : MonoBehaviour
         CheckPoins();
         CreateMewBorder();
       //  Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
-
-
-
-
-
-        yield break;
-        yield return StartCoroutine(WaitForKeyPress());
-
-        one = true;
-        for (int y = 0; y < xSize; y++)
-            for (int x = 0; x < ySize; x++)
-            {
-                if (polyCheck(points.ToArray(), new Vector3(x, y, 0)))
-                {
-                    tex.SetPixel(x, y, Color.green);
-                }
-            }
-        tex.Apply();
-
-
-        //  points.Clear();
-
-        CreateMewBorder();
-
-        yield return null;
     }
-
-    private IEnumerator WaitForKeyPress()
-    {
-        while (true)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-                yield break;
-            yield return 0;
-        }
-    }
-
 
     private void CheckPoins()
     {
@@ -368,10 +298,6 @@ public class Map : MonoBehaviour
         var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 3, Mathf.Sin(angle - Mathf.PI / 2) * 3, 0f);
         var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 3, Mathf.Sin(angle + Mathf.PI / 2) * 3, 0f);
 
-       // Debug.Log(Mathf.RoundToInt(middleLeft.x) + " " + Mathf.RoundToInt(middleLeft.y));
-       // Debug.Log(Mathf.RoundToInt(middleRight.x) + " " + Mathf.RoundToInt(middleRight.y));
-
-
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
@@ -379,69 +305,28 @@ public class Map : MonoBehaviour
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
         Debug.Log(countLeft + " : " + countRight);
-        //return;
-        //var prePreLastPoint = points[points.Count - 3];
-        //var middle = new Vector3(Mathf.RoundToInt((lastPoint.x + preLastPoint.x + prePreLastPoint.x) / 3),
-        //    Mathf.RoundToInt((lastPoint.y + preLastPoint.y + prePreLastPoint.y) / 3));
-        //StartCoroutine(FloodFillCorot(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y)));
+      
         StartCoroutine(FloodFillCorot(
             countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
             countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
             ));
 
-        //FloodFill(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y));
-        tex.Apply();
-        return;
-        var listToClear = new List<Vector3>();
-        for (int i = 0; i < points.Count; i++)
-        {
-            var newList = new List<Vector3>();
-            newList.AddRange(points);
-            newList.Remove(newList[i]);
-            if (polyCheck(newList.ToArray(), points[i]))
-            {
-                listToClear.Add(points[i]);
-                tex.SetPixel(Mathf.RoundToInt(points[i].x), Mathf.RoundToInt(points[i].y), Color.red);
-            }
-        }
-        tex.Apply();
-        foreach (var item in listToClear)
-            points.RemoveAll(vector3 => vector3 == item);
+        tex.Apply(); 
     }
-    int c = 0;
+ 
 
     private int TryToFill(int x, int y)
     {
-
-      //  var color = tex.GetPixel(x, y);
-       // if (color == Color.green || color == Color.yellow || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
-         //  return 0;
-        //tex.SetPixel(x, y, Color.yellow);
-        //tex.Apply();
-
-
         if (x <= 0 || x >= xSize - 1 || y <= 0 || y >= ySize - 1 || map[x][y] == 33 || map[x][y] == 1)
             return 0;
 
         map[x][y] = 8;
 
         return 1 + TryToFill(x + 1, y) + TryToFill(x - 1, y) + TryToFill(x, y + 1) + TryToFill(x, y - 1);
-
-
     }
 
     private void ClearFill(int x, int y)
     {
-        //var color = tex.GetPixel(x, y);
-        //if (color == Color.gray || color == Color.green || color == Color.blue || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
-        //    return;
-        //if (color == Color.yellow)
-        //{
-        //    tex.SetPixel(x, y, Color.blue);
-        //    tex.Apply();
-        //}
-
-
         var color = map[x][y];
         if (color != 8)
             return;
@@ -502,72 +387,4 @@ public class Map : MonoBehaviour
 
         myPoins.Clear();
     }
-
-    private void CheckForBorders()
-    {
-        var firstPoint = points.First();
-        var lastPoint = points.Last();
-
-        if (map[(int)lastPoint.x][(int)lastPoint.y] == 33)
-        {
-            var tmpY = lastPoint.y;
-
-            if (lastPoint.x == xSize - 1 || lastPoint.x == 0)
-            {
-                //   FIX Y
-                if (lastPoint.y < firstPoint.y || lastPoint.y > firstPoint.y)
-                {
-
-                    var dir = firstPoint.y - lastPoint.y > 0 ? 1 : -1;
-                    while (tmpY > 0 && tmpY < ySize || map[(int)lastPoint.x][(int)tmpY] != 33)
-                    {
-                        tmpY += dir;
-                        tex.SetPixel((int)lastPoint.x, (int)tmpY, Color.green);
-                        if (map[(int)tmpY][(int)lastPoint.x] != 33)
-                            if (map[(int)lastPoint.x][(int)tmpY] != 33)
-                            {
-                                points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
-                                break;
-                            }
-                    }
-                    points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
-                }
-            }
-            if (lastPoint.y == ySize - 1 || lastPoint.y == 0)
-            {
-
-                //  FIX X
-                if (lastPoint.x < firstPoint.x || lastPoint.x > firstPoint.x)
-                {
-                    var tmpX = lastPoint.x;
-                    var dir = firstPoint.x - lastPoint.x > 0 ? 1 : -1;
-                    while (tmpX > 0 && tmpX < xSize || map[(int)tmpX][(int)lastPoint.y] != 33)
-                    {
-                        tmpX += dir;
-                        tex.SetPixel((int)tmpX, (int)lastPoint.y, Color.green);
-                        if (map[(int)tmpY][(int)lastPoint.x] != 33)
-                            if (map[(int)lastPoint.x][(int)tmpY] != 33)
-                            {
-                                points.Add(new Vector3(Mathf.RoundToInt(lastPoint.x), Mathf.RoundToInt(tmpY)));
-                                break;
-                            }
-                    }
-                    points.Add(new Vector3(Mathf.RoundToInt(tmpX), Mathf.RoundToInt(lastPoint.y)));
-                }
-            }
-        }
-    }
-
-    public bool polyCheck(Vector3[] p, Vector3 v)
-    {
-        int j = p.Length - 1;
-        bool c = false;
-        for (int i = 0; i < p.Length; j = i++)
-            c ^= p[i].y > v.y ^ p[j].y > v.y && v.x < (p[j].x - p[i].x) * (v.y - p[i].y) / (p[j].y - p[i].y) + p[i].x;
-        return c;
-    }
-}
-public enum Value
-{
-    border = (byte)33
 }
