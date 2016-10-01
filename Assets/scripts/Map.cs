@@ -6,6 +6,13 @@ using System;
 
 public class Map : MonoBehaviour
 {
+    [Header("Settigs Game")]
+    [Range(10f, 90f)]
+    public float percentWin = 90;
+
+
+
+
     public int DensityPixels = 10;
     public Transform Player;
     public Camera cameraOther;
@@ -36,6 +43,9 @@ public class Map : MonoBehaviour
 
     private int allPixel = 0;
     private int paintedPixels = 0;
+    private int paintedPixelsBorder = 0;
+    private float percentpainted = 0;
+
 
 
     void OnEnable()
@@ -66,11 +76,13 @@ public class Map : MonoBehaviour
                 {
                     map[x][y] = 33; // border
                     tex.SetPixel(x, y, Color.gray);
+                    paintedPixelsBorder++;
                 }
             }
         }
 
         tex.Apply();
+        allPixel =( xSize * ySize) - paintedPixelsBorder;
         paintedPixels = 0;
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
@@ -81,7 +93,7 @@ public class Map : MonoBehaviour
         myPoins.Clear();
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
-
+        percentpainted = 0;
 
         SpawnEnemies();
         load = true;
@@ -121,7 +133,7 @@ public class Map : MonoBehaviour
         float widthOtherCamera = heightOtherCamera * cameraOther.aspect;
         cameraOther.transform.position = new Vector3(cameraOther.transform.position.x + widthOtherCamera / 2, cameraOther.transform.position.y + heightOtherCamera / 2, -10);
 
-        allPixel = xSize * ySize;
+     
 
         Debug.Log(xSize + "   " + ySize + "  AllPixel " + allPixel);
     }
@@ -184,8 +196,7 @@ public class Map : MonoBehaviour
         if (gridpos.x < 0 || gridpos.x > xSize -1 || gridpos.y < 0 || gridpos.y > ySize -1)
             return;
 
-        transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
-        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
+        
 
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
 
@@ -194,6 +205,12 @@ public class Map : MonoBehaviour
         int y_y = (Mathf.RoundToInt(gridpos.y));
         byte cur = map[x_x][y_y];
 
+      //  Debug.Log(cur);
+        //if (cur == 1) // самі в себе
+        //{
+        //    Restart();
+        //}
+
         if (cur == 33) // В ЗАБОР
         {
             if (myPoins.Count != 0)
@@ -201,22 +218,20 @@ public class Map : MonoBehaviour
                 AutoFloodFill();
             }
         }
-        if (cur != 33) // тут ми були
+        if (cur != 33 && cur != 1) // тут ми були
         {
             direction = new Vector2(moveX, moveY);
-            paintedPixels++;
             map[x_x][y_y] = 1;
             myPoins.Add(new Vector2(x_x, y_y));
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
             tex.Apply();
+            paintedPixels++;
         }
 
-        
 
-        if (cur == 1) // самі в себе
-        {
-           //Restart();
-        }
+        transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
+        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
+
     }
 
     void MoveEnemy()
@@ -303,7 +318,7 @@ public class Map : MonoBehaviour
         CheckPoins();
         CreateMewBorder();
         direction = Vector2.zero;
-        //  Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
+        // 
     }
 
     private void CheckPoins()
@@ -323,13 +338,21 @@ public class Map : MonoBehaviour
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
-     //   Debug.Log(countLeft + " : " + countRight);
-      
-        StartCoroutine(FloodFillCorot(
-            countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
-            countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
-            ));
+        if (countLeft <= countRight)
+            paintedPixels += countLeft;
+        else
+            paintedPixels += countRight;
 
+
+        percentpainted = paintedPixels / (allPixel / 100f);
+       // Debug.Log(percentpainted);
+
+        StartCoroutine(FloodFillCorot(
+                countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
+                countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
+                ));
+
+        
         tex.Apply(); 
     }
  
@@ -366,10 +389,6 @@ public class Map : MonoBehaviour
     private IEnumerator FloodFillCorot(int x, int y)
     {
         var color = tex.GetPixel(x, y);
-        //if (map[x][y] == 33)
-        //return;
-        //map[x][y
-
 
         if (x >= 0  && x <= xSize - 1 && y >= 0 && y <= ySize - 1 && map[x][y] == 2)
         {
@@ -382,17 +401,12 @@ public class Map : MonoBehaviour
             }
         }
 
-
         if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
             yield break;
-
-
-       
 
         map[x][y] = 33;
         tex.SetPixel(x, y, Color.green);
         tex.Apply();
-        paintedPixels++;
 
         yield return new WaitForSeconds(0.025f);
         StartCoroutine(FloodFillCorot(x + 1, y));
