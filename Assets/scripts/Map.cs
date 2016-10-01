@@ -78,6 +78,7 @@ public class Map : MonoBehaviour
         Player.position = new Vector3(pos.x + 0.5f, pos.y);
 
         direction = Vector2.zero;
+        myPoins.Clear();
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
 
@@ -88,7 +89,7 @@ public class Map : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        return;
+     // return;
         //TODO//
         foreach (var item in PoolEnemy)
         {
@@ -96,7 +97,7 @@ public class Map : MonoBehaviour
         }
         enemies.Clear();
 
-        int countEnemy = UnityEngine.Random.Range(2, 6);
+        int countEnemy = UnityEngine.Random.Range(2, 4);
 
         for (int i = 0; i < countEnemy; i++)
         {
@@ -214,7 +215,7 @@ public class Map : MonoBehaviour
 
         if (cur == 1) // самі в себе
         {
-            //  Restart();
+           //Restart();
         }
     }
 
@@ -245,7 +246,7 @@ public class Map : MonoBehaviour
                 y_y = ySize - 1;
             }
 
-            if (map[x_x][y_y] == 33)
+            if (map[x_x][y_y] == 33 &&(y_y == ySize -1 || y_y == 0 || x_x == xSize - 1 || x_x == 0))
             {
                 if ((y_y + 1 < ySize - 1 && map[x_x][y_y + 1] == 33) && (y_y - 1 > 0 && map[x_x][y_y - 1] == 33))
                 {
@@ -262,6 +263,10 @@ public class Map : MonoBehaviour
                 ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
 
             }
+            else if(map[x_x][y_y] == 33)
+            {
+                ene.gameObject.SetActive(false);
+            }
 
             if (map[x_x][y_y] == 1)
             {
@@ -269,15 +274,18 @@ public class Map : MonoBehaviour
                 break;
             }
 
-            //map[x_x][y_y] = 2;
+           
+            map[x_x][y_y] = 2;
 
-            //if (ene.LastPoz != Vector2.zero)
-            //{
-            //    map[(int)ene.LastPoz.x][(int)ene.LastPoz.y] = ene.LastSumbl; 
-            //}
+            if (ene.LastPoz != Vector2.zero)
+            {
 
-            //ene.LastPoz = new Vector2(x_x, y_y);
-            //ene.LastSumbl = map[x_x][y_y];
+                map[(int)ene.LastPoz.x][(int)ene.LastPoz.y] = ene.LastSumbl;
+            }
+
+            ene.LastPoz = new Vector2(x_x, y_y);
+            ene.LastSumbl = map[x_x][y_y];
+
             ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
         }
     }
