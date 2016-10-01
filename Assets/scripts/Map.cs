@@ -141,7 +141,7 @@ public class Map : MonoBehaviour
     void Update()
     {
         MoveEnemy();
-        //return;
+      //  return;
         if (Input.GetKeyDown(KeyCode.U))
         {
             AutoFloodFill();
@@ -171,20 +171,21 @@ public class Map : MonoBehaviour
 
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
         {
-            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
+           // tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
 
 
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
-        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
 
-        direction = new Vector2(moveX, moveY);
+        
 
-        if (gridpos.x < 0 || gridpos.x >= xSize || gridpos.y < 0 || gridpos.y >= ySize)
+        if (gridpos.x < 0 || gridpos.x > xSize -1 || gridpos.y < 0 || gridpos.y > ySize -1)
             return;
 
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
+        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
+
         gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
 
 
@@ -194,17 +195,20 @@ public class Map : MonoBehaviour
 
         if (cur == 33) // В ЗАБОР
         {
+           // direction = Vector2.zero;
             //StartCoroutine(AutoFloodFill());
         }
         if (cur != 33) // тут ми були
         {
+            direction = new Vector2(moveX, moveY);
             paintedPixels++;
             map[x_x][y_y] = 1;
             myPoins.Add(new Vector2(x_x, y_y));
+            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+            tex.Apply();
         }
 
-        tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
-        tex.Apply();
+        
 
         if (cur == 1) // самі в себе
         {
@@ -279,12 +283,11 @@ public class Map : MonoBehaviour
     void AutoFloodFill()
     {
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
-        tex.SetPixel(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), Color.magenta);
-        tex.Apply();
 
         CheckPoins();
         CreateMewBorder();
-      //  Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
+        direction = Vector2.zero;
+        //  Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
     }
 
     private void CheckPoins()
@@ -304,7 +307,7 @@ public class Map : MonoBehaviour
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
-        Debug.Log(countLeft + " : " + countRight);
+     //   Debug.Log(countLeft + " : " + countRight);
       
         StartCoroutine(FloodFillCorot(
             countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
@@ -317,7 +320,7 @@ public class Map : MonoBehaviour
 
     private int TryToFill(int x, int y)
     {
-        if (x <= 0 || x >= xSize - 1 || y <= 0 || y >= ySize - 1 || map[x][y] == 33 || map[x][y] == 1)
+        if (x <= 0 || x >= xSize - 1 || y <= 0 || y >= ySize - 1 || map[x][y] == 33 || map[x][y] == 1 || map[x][y] == 8)
             return 0;
 
         map[x][y] = 8;
@@ -349,7 +352,7 @@ public class Map : MonoBehaviour
         //return;
         //map[x][y
 
-        if (color == Color.green || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
+        if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
             yield break;
         tex.SetPixel(x, y, Color.green);
         tex.Apply();
