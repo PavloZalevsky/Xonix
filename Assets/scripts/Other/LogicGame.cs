@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LogicGame : MonoBehaviour
+public class GameLogic : MonoBehaviour
 {
     public Transform target;
     private Texture2D tex;
