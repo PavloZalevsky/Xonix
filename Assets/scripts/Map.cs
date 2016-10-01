@@ -89,6 +89,7 @@ public class Map : MonoBehaviour
 
     private void SpawnEnemies()
     {
+        return;
         //TODO//
         foreach (var item in PoolEnemy)
         {
@@ -196,7 +197,7 @@ public class Map : MonoBehaviour
 
         if (cur == 33) // В ЗАБОР
         {
-            StartCoroutine(AutoFloodFill());
+            //StartCoroutine(AutoFloodFill());
         }
         if (cur != 33) // тут ми були
         {
@@ -218,6 +219,7 @@ public class Map : MonoBehaviour
 
     void MoveEnemy()
     {
+
         //TODO//
         if (!load) return;
 
@@ -316,7 +318,7 @@ public class Map : MonoBehaviour
 
         CheckPoins();
         CreateMewBorder();
-        Debug.Log(paintedPixels + "    " + (paintedPixels /(allPixel / 100)));
+        Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
 
 
 
@@ -354,14 +356,35 @@ public class Map : MonoBehaviour
         }
     }
 
+
     private void CheckPoins()
     {
         var lastPoint = points.Last();
         var preLastPoint = points[points.Count - 2];
-        var prePreLastPoint = points[points.Count - 3];
-        var middle = new Vector3(Mathf.RoundToInt((lastPoint.x + preLastPoint.x + prePreLastPoint.x) / 3),
-            Mathf.RoundToInt((lastPoint.y + preLastPoint.y + prePreLastPoint.y) / 3));
-        StartCoroutine(FloodFillCorot(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y)));
+
+        var difference = lastPoint - preLastPoint;
+        var angle = Mathf.Atan2(difference.y, difference.x);
+        var middlePoint = (lastPoint + preLastPoint) / 2;
+        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 3, Mathf.Sin(angle - Mathf.PI / 2) * 3, 0f);
+        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 3, Mathf.Sin(angle + Mathf.PI / 2) * 3, 0f);
+
+        var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
+        var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
+
+        ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
+        ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
+
+        Debug.Log(countLeft + " : " + countRight);
+        //return;
+        //var prePreLastPoint = points[points.Count - 3];
+        //var middle = new Vector3(Mathf.RoundToInt((lastPoint.x + preLastPoint.x + prePreLastPoint.x) / 3),
+        //    Mathf.RoundToInt((lastPoint.y + preLastPoint.y + prePreLastPoint.y) / 3));
+        //StartCoroutine(FloodFillCorot(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y)));
+        StartCoroutine(FloodFillCorot(
+            countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
+            countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
+            ));
+
         //FloodFill(Mathf.RoundToInt(middle.x), Mathf.RoundToInt(middle.y));
         tex.Apply();
         return;
@@ -380,6 +403,50 @@ public class Map : MonoBehaviour
         tex.Apply();
         foreach (var item in listToClear)
             points.RemoveAll(vector3 => vector3 == item);
+    }
+    int c = 0;
+
+    private int TryToFill(int x, int y)
+    {
+
+        var color = tex.GetPixel(x, y);
+        if (color == Color.green || color == Color.yellow || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
+            return 0;
+        tex.SetPixel(x, y, Color.yellow);
+        tex.Apply();
+
+        //var b = map[x][y];
+        //if (b == 33 || b == 1 || x < 0 || x >= xSize || y < 0 || y >= ySize )
+        //    return 0;
+        //map[x][y] = 8;
+        return 1 + TryToFill(x + 1, y) + TryToFill(x - 1, y) + TryToFill(x, y + 1) + TryToFill(x, y - 1);
+    }
+
+    private void ClearFill(int x, int y)
+    {
+        var color = tex.GetPixel(x, y);
+        if (color == Color.gray || color == Color.green || color == Color.blue || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
+            return;
+        if (color == Color.yellow)
+        {
+            tex.SetPixel(x, y, Color.blue);
+            tex.Apply();
+        }
+
+
+        //var color = map[x][y];
+        //if (color != 8)
+        //    return;
+
+        //if (color == 8)
+        //{
+        //    map[x][y] = 0;
+        //}
+
+        ClearFill(x + 1, y);
+        ClearFill(x - 1, y);
+        ClearFill(x, y + 1);
+        ClearFill(x, y - 1);
     }
 
     private IEnumerator FloodFillCorot(int x, int y)
