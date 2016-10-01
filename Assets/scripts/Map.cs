@@ -195,8 +195,10 @@ public class Map : MonoBehaviour
 
         if (cur == 33) // В ЗАБОР
         {
-           // direction = Vector2.zero;
-            //StartCoroutine(AutoFloodFill());
+            if (myPoins.Count != 0)
+            {
+                AutoFloodFill();
+            }
         }
         if (cur != 33) // тут ми були
         {
@@ -282,6 +284,7 @@ public class Map : MonoBehaviour
 
     void AutoFloodFill()
     {
+        Debug.Log("AutoFloodFill");
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
 
         CheckPoins();
@@ -354,6 +357,7 @@ public class Map : MonoBehaviour
 
         if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
             yield break;
+        map[x][y] = 33;
         tex.SetPixel(x, y, Color.green);
         tex.Apply();
         paintedPixels++;
