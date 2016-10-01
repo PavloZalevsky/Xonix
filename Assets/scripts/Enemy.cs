@@ -10,7 +10,17 @@ public class Enemy : MonoBehaviour {
     [HideInInspector]
     public Vector2 LastPoz = Vector2.zero;
     public byte LastSumbl = 100;
+    [HideInInspector]
+    public int xCur = 0;
+      [HideInInspector]
+    public int yCur = 0;
 
+
+
+    //public Enemy(Vector3 position)
+    //{
+    //    transform.position = position;
+    //}
     void OnEnable()
     {
         speedEnemy = Random.Range(10, 35);

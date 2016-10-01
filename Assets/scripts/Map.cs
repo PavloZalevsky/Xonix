@@ -223,9 +223,12 @@ public class Map : MonoBehaviour
     {
         //TODO//
         if (!load) return;
+        
 
         foreach (var ene in enemies)
         {
+            if (!ene.gameObject.activeSelf) continue;
+
             int x_x = (Mathf.RoundToInt(ene.transform.position.x));
             int y_y = (Mathf.RoundToInt(ene.transform.position.y));
 
@@ -246,7 +249,7 @@ public class Map : MonoBehaviour
                 y_y = ySize - 1;
             }
 
-            if (map[x_x][y_y] == 33 &&(y_y == ySize -1 || y_y == 0 || x_x == xSize - 1 || x_x == 0))
+            if (map[x_x][y_y] == 33)
             {
                 if ((y_y + 1 < ySize - 1 && map[x_x][y_y + 1] == 33) && (y_y - 1 > 0 && map[x_x][y_y - 1] == 33))
                 {
@@ -263,10 +266,10 @@ public class Map : MonoBehaviour
                 ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
 
             }
-            else if(map[x_x][y_y] == 33)
-            {
-                ene.gameObject.SetActive(false);
-            }
+            //else if(map[x_x][y_y] == 33)
+            //{
+            //    ene.gameObject.SetActive(false);
+            //}
 
             if (map[x_x][y_y] == 1)
             {
@@ -276,6 +279,8 @@ public class Map : MonoBehaviour
 
            
             map[x_x][y_y] = 2;
+            ene.xCur = x_x;
+            ene.yCur = y_y;
 
             if (ene.LastPoz != Vector2.zero)
             {
@@ -341,6 +346,8 @@ public class Map : MonoBehaviour
 
     private void ClearFill(int x, int y)
     {
+        if (x <= 0 || x >= xSize - 1 || y <= 0 || y >= ySize - 1)
+            return;
         var color = map[x][y];
         if (color != 8)
             return;
@@ -363,8 +370,25 @@ public class Map : MonoBehaviour
         //return;
         //map[x][y
 
+
+        if (x >= 0  && x <= xSize - 1 && y >= 0 && y <= ySize - 1 && map[x][y] == 2)
+        {
+            foreach (var ene in enemies)
+            {
+                if (ene.xCur == x && ene.yCur == y)
+                {
+                    ene.gameObject.SetActive(false);
+                }
+            }
+        }
+
+
         if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
             yield break;
+
+
+       
+
         map[x][y] = 33;
         tex.SetPixel(x, y, Color.green);
         tex.Apply();
@@ -383,6 +407,11 @@ public class Map : MonoBehaviour
         //if (map[x][y] == 33)
         //return;
         //map[x][y
+        if(map[x][y] == 2)
+        {
+            Debug.Log("!!");
+        }
+
         if (color == Color.green)
             return;
         tex.SetPixel(x, y, Color.green);
