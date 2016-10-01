@@ -318,7 +318,7 @@ public class Map : MonoBehaviour
 
         CheckPoins();
         CreateMewBorder();
-        Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
+      //  Debug.Log(paintedPixels + "    " + (paintedPixels / (allPixel / 100)));
 
 
 
@@ -366,7 +366,11 @@ public class Map : MonoBehaviour
         var angle = Mathf.Atan2(difference.y, difference.x);
         var middlePoint = (lastPoint + preLastPoint) / 2;
         var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 3, Mathf.Sin(angle - Mathf.PI / 2) * 3, 0f);
-        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 3, Mathf.Sin(angle + Mathf.PI / 2) * 3, 0f);
+        var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 3, Mathf.Sin(angle + Mathf.PI / 2) * 3, 0f);
+
+       // Debug.Log(Mathf.RoundToInt(middleLeft.x) + " " + Mathf.RoundToInt(middleLeft.y));
+       // Debug.Log(Mathf.RoundToInt(middleRight.x) + " " + Mathf.RoundToInt(middleRight.y));
+
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
@@ -409,39 +413,43 @@ public class Map : MonoBehaviour
     private int TryToFill(int x, int y)
     {
 
-        var color = tex.GetPixel(x, y);
-        if (color == Color.green || color == Color.yellow || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
-            return 0;
-        tex.SetPixel(x, y, Color.yellow);
-        tex.Apply();
+      //  var color = tex.GetPixel(x, y);
+       // if (color == Color.green || color == Color.yellow || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
+         //  return 0;
+        //tex.SetPixel(x, y, Color.yellow);
+        //tex.Apply();
 
-        //var b = map[x][y];
-        //if (b == 33 || b == 1 || x < 0 || x >= xSize || y < 0 || y >= ySize )
-        //    return 0;
-        //map[x][y] = 8;
+
+        if (x <= 0 || x >= xSize - 1 || y <= 0 || y >= ySize - 1 || map[x][y] == 33 || map[x][y] == 1)
+            return 0;
+
+        map[x][y] = 8;
+
         return 1 + TryToFill(x + 1, y) + TryToFill(x - 1, y) + TryToFill(x, y + 1) + TryToFill(x, y - 1);
+
+
     }
 
     private void ClearFill(int x, int y)
     {
-        var color = tex.GetPixel(x, y);
-        if (color == Color.gray || color == Color.green || color == Color.blue || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
-            return;
-        if (color == Color.yellow)
-        {
-            tex.SetPixel(x, y, Color.blue);
-            tex.Apply();
-        }
-
-
-        //var color = map[x][y];
-        //if (color != 8)
+        //var color = tex.GetPixel(x, y);
+        //if (color == Color.gray || color == Color.green || color == Color.blue || color == Color.magenta || color == Color.black || x < 0 || x >= xSize || y < 0 || y >= ySize)
         //    return;
-
-        //if (color == 8)
+        //if (color == Color.yellow)
         //{
-        //    map[x][y] = 0;
+        //    tex.SetPixel(x, y, Color.blue);
+        //    tex.Apply();
         //}
+
+
+        var color = map[x][y];
+        if (color != 8)
+            return;
+
+        if (color == 8)
+        {
+            map[x][y] = 0;
+        }
 
         ClearFill(x + 1, y);
         ClearFill(x - 1, y);
