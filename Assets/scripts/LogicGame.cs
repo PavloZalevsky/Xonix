@@ -331,8 +331,8 @@ public class LogicGame : MonoBehaviour
         var difference = lastPoint - preLastPoint;
         var angle = Mathf.Atan2(difference.y, difference.x);
         var middlePoint = (lastPoint + preLastPoint) / 2;
-        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 3, Mathf.Sin(angle - Mathf.PI / 2) * 3, 0f);
-        var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 3, Mathf.Sin(angle + Mathf.PI / 2) * 3, 0f);
+        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1, Mathf.Sin(angle - Mathf.PI / 2) * 1, 0f);
+        var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1, Mathf.Sin(angle + Mathf.PI / 2) * 1, 0f);
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
@@ -340,7 +340,7 @@ public class LogicGame : MonoBehaviour
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
-     //   Debug.Log(countLeft + " : " + countRight);
+        Debug.Log(countLeft + " : " + countRight);
 
         if (countLeft <= countRight)
             paintedPixels += countLeft;
