@@ -14,6 +14,7 @@ public class GameView : GameLogic
     public Text       text;
     public Text       txtPercent;
     public Text       txtLevel;
+    public Text       txtTimer;
     public Button     BtnNext;
     public Button     BtnStartGame;
     public Button     BtnShadow;
@@ -174,6 +175,20 @@ public class GameView : GameLogic
         base.ShowLevel(Level);
 
         txtLevel.text =  "Level: " + Level;
+    }
+
+    public override void Timer(float time)
+    {
+        base.Timer(time);
+
+        var minutes = (int)(time / 60);
+        var seconds = (int)(time % 60);
+        if (seconds < 0) seconds = 0;
+        var minutesString = minutes < 10 ? "0" + minutes.ToString() : minutes.ToString();
+        var secondsString = seconds < 10 ? "0" + seconds.ToString() : seconds.ToString();
+
+        txtTimer.text ="Time: " + minutesString + ":" + secondsString;
+        txtTimer.color = seconds < 10 && minutes == 0? Color.red : Color.white;
     }
 
 

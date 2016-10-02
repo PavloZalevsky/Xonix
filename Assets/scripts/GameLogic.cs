@@ -6,39 +6,30 @@ using System;
 
 public class GameLogic : MonoBehaviour
 {
-    [Header("Settigs Game")]
+    [Header("Game Logic element")]
     [Range(10f, 85)]
     public float percentWin = 85;
 
-
-
-
-    public int DensityPixels = 4;
     public Transform Player;
     public Camera cameraOther;
-
     public Transform target;
-    // public int texSize = 128;
+
+    private int DensityPixels = 4;
+
     private Texture2D tex;
     private byte[][] map;
 
     public List<Enemy> PoolEnemy = new List<Enemy>();
     private List<Enemy> enemies = new List<Enemy>();
 
-
     private float speed = 25.0f;
-
 
     private int xSize = 0;
     private int ySize = 0;
 
-
-
     private Vector3 pos;
     private Vector3 gridpos;
     private Vector3 oldgridpos;
-
-    private Vector3 startPos;
 
     private bool load = false;
 
@@ -51,6 +42,8 @@ public class GameLogic : MonoBehaviour
     private int CurrentLife = 0;
 
     private int level = 1;
+
+    private float time = 0;
 
     public virtual void OnEnable()
     {
@@ -98,7 +91,8 @@ public class GameLogic : MonoBehaviour
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         percentpainted = 0;
-        if(nextLevel)
+        time = LevelConfig.instance.levels[level - 1].Time;
+        if (nextLevel)
         {
             level++;
         }
@@ -195,12 +189,23 @@ public class GameLogic : MonoBehaviour
 
     private List<Vector2> myPoins = new List<Vector2>();
 
+    void UpdateTimer()
+    {
+        time -= Time.deltaTime;
+        if (time <= 0)
+            GameOver();
+
+        Timer(time);
+    }
+
+
     void Update()
     {
         if (!load) return;
 
 
         MoveEnemy();
+        UpdateTimer();
         if (Input.GetKeyDown(KeyCode.U))
         {
             AutoFloodFill();
@@ -507,27 +512,6 @@ public class GameLogic : MonoBehaviour
         StartCoroutine(FloodFillCorot(x, y - 1));
     }
 
-    public void FloodFill(int x, int y)
-    {
-        var color = tex.GetPixel(x, y);
-        //if (map[x][y] == 33)
-        //return;
-        //map[x][y
-        if(map[x][y] == 2)
-        {
-            Debug.Log("!!");
-        }
-
-        if (color == Color.green)
-            return;
-        tex.SetPixel(x, y, Color.green);
-        tex.Apply();
-        FloodFill(x + 1, y);
-        FloodFill(x - 1, y);
-        FloodFill(x, y + 1);
-        FloodFill(x, y - 1);
-    }
-
     private void CreateMewBorder()
     {
         foreach (var item in myPoins)
@@ -548,5 +532,5 @@ public class GameLogic : MonoBehaviour
 
     public virtual void ShowLevel(int Level) { }
 
-
+    public virtual void Timer(float time) { }
 }
