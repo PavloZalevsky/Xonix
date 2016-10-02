@@ -47,7 +47,8 @@ public class LogicGame : MonoBehaviour
     private int paintedPixelsBorder = 0;
     private float percentpainted = 0;
 
-
+    int CountLife = 3;
+    int CurrentLife = 0;
 
     void OnEnable()
     {
@@ -90,7 +91,7 @@ public class LogicGame : MonoBehaviour
         oldgridpos = Vector3.up;
         transform.position = pos;
         Player.position = new Vector3(pos.x + 0.5f, pos.y);
-
+        CurrentLife = CountLife;
         direction = Vector2.zero;
         myPoins.Clear();
         points.Clear();
@@ -125,10 +126,12 @@ public class LogicGame : MonoBehaviour
     {
         float heightMainCamera = Camera.main.orthographicSize * 2f;
         float widtMainCamerh = heightMainCamera * Screen.width / Screen.height;
-        target.transform.localScale = new Vector3(widtMainCamerh, heightMainCamera, 0.1f);
+        Debug.Log(heightMainCamera);
+        target.transform.localScale = new Vector3(widtMainCamerh, heightMainCamera - 1, 0.1f);
+        target.transform.position = new Vector3(target.transform.position.x, target.transform.position.y -0.5f, target.transform.position.z);
 
         xSize = Mathf.RoundToInt(widtMainCamerh * DensityPixels);
-        ySize = Mathf.RoundToInt(heightMainCamera * DensityPixels);
+        ySize = Mathf.RoundToInt((heightMainCamera - 1) * DensityPixels);
 
         cameraOther.orthographicSize = cameraOther.orthographicSize * DensityPixels;
         float heightOtherCamera = 2f * cameraOther.orthographicSize;
@@ -155,7 +158,7 @@ public class LogicGame : MonoBehaviour
 
     void Update()
     {
-       // MoveEnemy();
+        MoveEnemy();
         if (Input.GetKeyDown(KeyCode.U))
         {
             AutoFloodFill();
@@ -213,7 +216,7 @@ public class LogicGame : MonoBehaviour
             }
             catch(Exception e)
             {
-                Debug.LogError("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
+                Debug.Log("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
             }
         }
 
