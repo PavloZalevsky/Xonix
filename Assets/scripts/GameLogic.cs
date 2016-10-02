@@ -115,6 +115,11 @@ public class GameLogic : MonoBehaviour
         ShowLevel(level);
 
         SpawnEnemies(level);
+        Invoke("Loading", 0.3f);
+    }
+
+    void Loading()
+    {
         load = true;
     }
 
@@ -246,19 +251,18 @@ public class GameLogic : MonoBehaviour
 
         MoveEnemy();
         UpdateTimer();
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            AutoFloodFill();
-        }
+        MovePlayer();
+    }
+
+    private void MovePlayer()
+    {
 #if UNITY_EDITOR
-      moveX = Input.GetAxisRaw("Horizontal") * speed;
-       moveY = Input.GetAxisRaw("Vertical") * speed;
+        moveX = Input.GetAxisRaw("Horizontal") * speed;
+        moveY = Input.GetAxisRaw("Vertical") * speed;
 #else
         SwipeTouch();
 #endif
 
-       // Debug.Log(moveX);
-      //  Debug.Log(moveY);
         if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
         {
             moveX = 0f;
@@ -288,9 +292,6 @@ public class GameLogic : MonoBehaviour
 
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
         {
-        ///    tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
-            tex.Apply();
-
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
 
@@ -302,7 +303,6 @@ public class GameLogic : MonoBehaviour
                     ((map[(int)gridpos.x + 1][(int)gridpos.y] == 0 && map[(int)gridpos.x - 1][(int)gridpos.y] == 0)
                      || (map[(int)gridpos.x][(int)gridpos.y + 1] == 0 && map[(int)gridpos.x][(int)gridpos.y - 1] == 0)))
                 {
-                  //  tex.SetPixel(Mathf.RoundToInt(oldgridpos.x), Mathf.RoundToInt(oldgridpos.y), Color.black);
                     points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
                 }
             }
@@ -342,9 +342,8 @@ public class GameLogic : MonoBehaviour
                 paintedPixels++;
             }
             oldgridpos = gridpos;
-
-
         }
+
     }
 
     void MoveEnemy()
