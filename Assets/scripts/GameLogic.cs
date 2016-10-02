@@ -91,7 +91,6 @@ public class GameLogic : MonoBehaviour
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         percentpainted = 0;
-        time = LevelConfig.instance.levels[level - 1].Time;
         if (nextLevel)
         {
             level++;
@@ -101,6 +100,7 @@ public class GameLogic : MonoBehaviour
             level = 1;
             CurrentLife = CountLife;
         }
+        time = LevelConfig.instance.levels[level - 1].Time;
         ShowPercent(percentpainted, percentWin);
         ShowHeart(CurrentLife);
         ShowLevel(level);

@@ -67,7 +67,7 @@ public class GameView : GameLogic
 
     void OnBtnExitClick()
     {
-
+        Application.Quit();
     }
     void OnBtnNextClick()
     {
@@ -76,7 +76,7 @@ public class GameView : GameLogic
     }
 
 
-        void OnBtnPauseClick()
+    void OnBtnPauseClick()
     {
         Time.timeScale = 0;
         ShowPause(true);
@@ -103,7 +103,6 @@ public class GameView : GameLogic
     public override void GameOver()
     {
         base.GameOver();
-
         ShowGameOver(true);
     }
 
@@ -120,7 +119,6 @@ public class GameView : GameLogic
     public override void GameWin()
     {
         base.GameWin();
-
         ShowGameWin(true);
     }
 
