@@ -7,8 +7,8 @@ using System;
 public class LogicGame : MonoBehaviour
 {
     [Header("Settigs Game")]
-    [Range(10f, 90f)]
-    public float percentWin = 90;
+    [Range(10f, 85)]
+    public float percentWin = 85;
 
 
 
@@ -36,6 +36,7 @@ public class LogicGame : MonoBehaviour
 
     private Vector3 pos;
     private Vector3 gridpos;
+    private Vector3 oldgridpos;
 
     private Vector3 startPos;
 
@@ -86,6 +87,7 @@ public class LogicGame : MonoBehaviour
         paintedPixels = 0;
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
+        oldgridpos = Vector3.up;
         transform.position = pos;
         Player.position = new Vector3(pos.x + 0.5f, pos.y);
 
@@ -109,7 +111,7 @@ public class LogicGame : MonoBehaviour
         }
         enemies.Clear();
 
-        int countEnemy = UnityEngine.Random.Range(4, 8);
+        int countEnemy = UnityEngine.Random.Range(2, 5);
 
         for (int i = 0; i < countEnemy; i++)
         {
@@ -153,8 +155,7 @@ public class LogicGame : MonoBehaviour
 
     void Update()
     {
-        MoveEnemy();
-      //  return;
+       // MoveEnemy();
         if (Input.GetKeyDown(KeyCode.U))
         {
             AutoFloodFill();
@@ -170,9 +171,9 @@ public class LogicGame : MonoBehaviour
         }
 
         // auto-movement
-        //var somethingPressed = moveX != 0f || moveY != 0f;
-        //moveX = !somethingPressed ? direction.x : moveX;
-        //moveY = !somethingPressed ? direction.y : moveY;
+        var somethingPressed = moveX != 0f || moveY != 0f;
+        moveX = !somethingPressed ? direction.x : moveX;
+        moveY = !somethingPressed ? direction.y : moveY;
 
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY))
             moveY = 0.0f;
@@ -182,56 +183,52 @@ public class LogicGame : MonoBehaviour
         if (moveX == 0f && moveY == 0f)
             return;
 
+        gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
+
+        if (gridpos.x < 0 || gridpos.x > xSize - 1 || gridpos.y < 0 || gridpos.y > ySize - 1)
+            return;
+
+        transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
+        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
+
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
         {
            // tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
 
-
-        gridpos = new Vector3(Mathf.RoundToInt(transform.position.x + moveX * Time.deltaTime), Mathf.RoundToInt(transform.position.y + moveY * Time.deltaTime), 0);
-
-        
-
-        if (gridpos.x < 0 || gridpos.x > xSize -1 || gridpos.y < 0 || gridpos.y > ySize -1)
-            return;
-
-        
-
-        gridpos = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
-
-
-        int x_x = (Mathf.RoundToInt(gridpos.x));
-        int y_y = (Mathf.RoundToInt(gridpos.y));
-        byte cur = map[x_x][y_y];
-
-      //  Debug.Log(cur);
-        //if (cur == 1) // самі в себе
-        //{
-        //    Restart();
-        //}
-
-        if (cur == 33) // В ЗАБОР
-        {
-            if (myPoins.Count != 0)
-            {
-                AutoFloodFill();
-            }
-        }
-        if (cur != 33 && cur != 1) // тут ми були
+        if (oldgridpos != gridpos)
         {
             direction = new Vector2(moveX, moveY);
-            map[x_x][y_y] = 1;
-            myPoins.Add(new Vector2(x_x, y_y));
-            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
-            tex.Apply();
-            paintedPixels++;
+
+            int x_x = (Mathf.RoundToInt(gridpos.x));
+            int y_y = (Mathf.RoundToInt(gridpos.y));
+            byte cur = map[x_x][y_y];
+
+            if (cur == 1) /*ми*/
+            {
+                Restart();
+            }
+
+            if (cur == 33)/*забор*/
+            {
+                if (myPoins.Count != 0)
+                {
+                    AutoFloodFill();
+                }
+            }
+            if (cur != 33 && cur != 1)
+            {
+                map[x_x][y_y] = 1;
+                myPoins.Add(new Vector2(x_x, y_y));
+                tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.green);
+                tex.Apply();
+                paintedPixels++;
+            }
+            oldgridpos = gridpos;
+
+         
         }
-
-
-        transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
-        Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
-
     }
 
     void MoveEnemy()
@@ -277,8 +274,8 @@ public class LogicGame : MonoBehaviour
                 else
                 {
                    // Debug.Log(x_x + " : " + y_y);
-                 //   tex.SetPixel(x_x, y_y, Color.red);
-                 //   tex.Apply();
+                    tex.SetPixel(x_x, y_y, Color.red);
+                    tex.Apply();
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
                 }
                 ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
@@ -295,7 +292,7 @@ public class LogicGame : MonoBehaviour
                 break;
             }
 
-            if (map[x_x][y_y] != 33)
+            if (map[x_x][y_y] != 33 && map[x_x][y_y] != 1)
             {
                 map[x_x][y_y] = 2;
                 ene.xCur = x_x;
@@ -322,7 +319,7 @@ public class LogicGame : MonoBehaviour
 
         CheckPoins();
         CreateMewBorder();
-        direction = Vector2.zero;
+       // direction = Vector2.zero;
         // 
     }
 
@@ -343,13 +340,20 @@ public class LogicGame : MonoBehaviour
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
+     //   Debug.Log(countLeft + " : " + countRight);
+
         if (countLeft <= countRight)
             paintedPixels += countLeft;
         else
             paintedPixels += countRight;
 
 
+
         percentpainted = paintedPixels / (allPixel / 100f);
+
+        if (percentpainted > percentWin)
+            Debug.Log("WIN!!!!!!!!!!!!!!");
+
        // Debug.Log(percentpainted);
 
         StartCoroutine(FloodFillCorot(
