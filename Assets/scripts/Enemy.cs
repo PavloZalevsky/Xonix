@@ -10,11 +10,6 @@ public class Enemy : MonoBehaviour {
     [HideInInspector]
     public Vector2 LastPoz = Vector2.zero;
     public byte LastSumbl = 100;
-    [HideInInspector]
-    public int xCur = 0;
-    [HideInInspector]
-    public int yCur = 0;
-    [HideInInspector]
     public int MAxSpeed = 0;
     [HideInInspector]
     public int MinSpeed = 0;

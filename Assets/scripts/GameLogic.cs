@@ -95,6 +95,7 @@ public class GameLogic : MonoBehaviour
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         percentpainted = 0;
+
         if (nextLevel)
         {
             level++;
@@ -201,7 +202,7 @@ public class GameLogic : MonoBehaviour
     Vector2 secondPressPos;
     Vector2 currentSwipe;
 
-    float wid = 0.7f;
+    float wid = 0.4f;
 
     public void SwipeMouse()
     {
@@ -296,9 +297,9 @@ public class GameLogic : MonoBehaviour
             AutoFloodFill();
         }
 #if UNITY_EDITOR
-        SwipeMouse();
-     //   moveX = Input.GetAxisRaw("Horizontal") * speed;
-       // moveY = Input.GetAxisRaw("Vertical") * speed;
+       // SwipeMouse();
+       moveX = Input.GetAxisRaw("Horizontal") * speed;
+        moveY = Input.GetAxisRaw("Vertical") * speed;
 #else
         SwipeTouch();
 #endif
@@ -334,7 +335,7 @@ public class GameLogic : MonoBehaviour
 
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
         {
-            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
+        ///    tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
             tex.Apply();
 
             points.Add(new Vector3(gridpos.x, gridpos.y));
@@ -348,7 +349,7 @@ public class GameLogic : MonoBehaviour
                     ((map[(int)gridpos.x + 1][(int)gridpos.y] == 0 && map[(int)gridpos.x - 1][(int)gridpos.y] == 0)
                      || (map[(int)gridpos.x][(int)gridpos.y + 1] == 0 && map[(int)gridpos.x][(int)gridpos.y - 1] == 0)))
                 {
-                    tex.SetPixel(Mathf.RoundToInt(oldgridpos.x), Mathf.RoundToInt(oldgridpos.y), Color.black);
+                  //  tex.SetPixel(Mathf.RoundToInt(oldgridpos.x), Mathf.RoundToInt(oldgridpos.y), Color.black);
                     points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
                 }
             }
@@ -403,39 +404,39 @@ public class GameLogic : MonoBehaviour
         {
             if (!ene.gameObject.activeSelf) continue;
 
-            int x_x = (Mathf.RoundToInt(ene.transform.position.x));
-            int y_y = (Mathf.RoundToInt(ene.transform.position.y));
+            int x = (Mathf.RoundToInt(ene.transform.position.x));
+            int y = (Mathf.RoundToInt(ene.transform.position.y));
 
-            if (x_x < 0)
+            if (x < 0)
             {
-                x_x = 0;
+                x = 0;
             }
-            if (x_x > xSize - 1)
+            if (x > xSize - 1)
             {
-                x_x = xSize - 1;
+                x = xSize - 1;
             }
-            if (y_y < 0)
+            if (y < 0)
             {
-                y_y = 0;
+                y = 0;
             }
-            if (y_y > ySize - 1)
+            if (y > ySize - 1)
             {
-                y_y = ySize - 1;
+                y = ySize - 1;
             }
 
-            if (map[x_x][y_y] == 33)
+            if (map[x][y] == 33)
             {
-                if ((y_y + 1 < ySize - 1 && map[x_x][y_y + 1] == 33) && (y_y - 1 > 0 && map[x_x][y_y - 1] == 33))
+                if ((y + 1 < ySize - 1 && map[x][y + 1] == 33) && (y - 1 > 0 && map[x][y - 1] == 33))
                 {
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y);
                 }
-                else if ((x_x + 1 < xSize - 1 && map[x_x + 1][y_y] == 33) && (x_x - 1 > 0 && map[x_x - 1][y_y] == 33))
+                else if ((x + 1 < xSize - 1 && map[x + 1][y] == 33) && (x - 1 > 0 && map[x - 1][y] == 33))
                 {
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x, ene.directionEnemy.y * -1);
                 }
                 else
                 {
-                    tex.SetPixel(x_x, y_y, Color.red);
+                    tex.SetPixel(x, y, Color.red);
                     tex.Apply();
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
                 }
@@ -443,25 +444,17 @@ public class GameLogic : MonoBehaviour
 
             }
 
-            if (map[x_x][y_y] == 1)
+            if (map[x][y] == 1)
             {
                 Restart();
             }
 
-            if (map[x_x][y_y] != 33 && map[x_x][y_y] != 1)
+            if (x > 0 && x < xSize - 1 && y > 0 && y < ySize - 1)
             {
-                map[x_x][y_y] = 2;
-                ene.xCur = x_x;
-                ene.yCur = y_y;
-
-                if (ene.LastPoz != Vector2.zero)
+                if (map[x][y] == 33 && map[x][y + 1] == 33 && map[x][y - 1] == 33 && map[x + 1][y] == 33 && map[x - 1][y] == 33)
                 {
-
-                    map[(int)ene.LastPoz.x][(int)ene.LastPoz.y] = ene.LastSumbl;
+                    ene.gameObject.SetActive(false);
                 }
-
-                ene.LastPoz = new Vector2(x_x, y_y);
-                ene.LastSumbl = map[x_x][y_y];
             }
 
             ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
@@ -493,7 +486,7 @@ public class GameLogic : MonoBehaviour
         //   Debug.Log(middleLeft);
         //  Debug.Log(middleRight);
 
-        tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
+       tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
         tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
         tex.Apply();
 
@@ -523,11 +516,14 @@ public class GameLogic : MonoBehaviour
         if (percentpainted >= percentWin)
             GameWin();
 
-        StartCoroutine(FloodFillCorot(
+        //StartCoroutine(FloodFillCorot(
+        //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
+        //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
+        //        ));
+        FloodFill(
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
-                ));
-
+                );
 
         tex.Apply();
     }
@@ -565,17 +561,6 @@ public class GameLogic : MonoBehaviour
     {
         var color = tex.GetPixel(x, y);
 
-        if (x >= 0 && x <= xSize - 1 && y >= 0 && y <= ySize - 1 && map[x][y] == 2)
-        {
-            foreach (var ene in enemies)
-            {
-                if (ene.xCur == x && ene.yCur == y)
-                {
-                    ene.gameObject.SetActive(false);
-                }
-            }
-        }
-
         if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
             yield break;
 
@@ -588,6 +573,22 @@ public class GameLogic : MonoBehaviour
         StartCoroutine(FloodFillCorot(x - 1, y));
         StartCoroutine(FloodFillCorot(x, y + 1));
         StartCoroutine(FloodFillCorot(x, y - 1));
+    }
+
+    public void FloodFill(int x, int y)
+    {
+        var color = tex.GetPixel(x, y);
+
+        if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
+            return;
+
+        map[x][y] = 33;
+        tex.SetPixel(x, y, Color.green);
+       
+        FloodFill(x + 1, y);
+        FloodFill(x - 1, y);
+        FloodFill(x, y + 1);
+        FloodFill(x, y - 1);
     }
 
     private void CreateMewBorder()
