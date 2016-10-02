@@ -79,7 +79,7 @@ public class GameLogic : MonoBehaviour
         }
 
         tex.Apply();
-        allPixel =( xSize * ySize) - paintedPixelsBorder;
+        allPixel = (xSize * ySize) - paintedPixelsBorder;
         paintedPixels = 0;
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
@@ -128,7 +128,7 @@ public class GameLogic : MonoBehaviour
         myPoins.Clear();
         points.Clear();
 
-        if(--CurrentLife == 0)
+        if (--CurrentLife == 0)
         {
             GameOver();
         }
@@ -165,7 +165,7 @@ public class GameLogic : MonoBehaviour
         float widtMainCamerh = heightMainCamera * Screen.width / Screen.height;
         Debug.Log(heightMainCamera);
         target.transform.localScale = new Vector3(widtMainCamerh, heightMainCamera - 1, 0.1f);
-        target.transform.position = new Vector3(target.transform.position.x, target.transform.position.y -0.5f, target.transform.position.z);
+        target.transform.position = new Vector3(target.transform.position.x, target.transform.position.y - 0.5f, target.transform.position.z);
 
         xSize = Mathf.RoundToInt(widtMainCamerh * DensityPixels);
         ySize = Mathf.RoundToInt((heightMainCamera - 1) * DensityPixels);
@@ -175,7 +175,7 @@ public class GameLogic : MonoBehaviour
         float widthOtherCamera = heightOtherCamera * cameraOther.aspect;
         cameraOther.transform.position = new Vector3(cameraOther.transform.position.x + widthOtherCamera / 2, cameraOther.transform.position.y + heightOtherCamera / 2, -10);
 
-     
+
 
         Debug.Log(xSize + "   " + ySize + "  AllPixel " + allPixel);
     }
@@ -199,10 +199,54 @@ public class GameLogic : MonoBehaviour
     }
 
 
+    Vector2 firstPressPos;
+    Vector2 secondPressPos;
+    Vector2 currentSwipe;
+
+    public void SwipeMouse()
+    {
+        moveX = 0f;
+        moveY = 0f;
+        if (Input.GetMouseButtonDown(0))
+        {
+            firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            secondPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
+            currentSwipe.Normalize();
+
+            if (currentSwipe.y > 0  && currentSwipe.x > -0.5f &&  currentSwipe.x < 0.5f) //up
+            {
+                Debug.Log("up");
+                moveY = 1 * speed;
+            }
+            if (currentSwipe.y < 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) // down
+            {
+                Debug.Log("down");
+
+                moveY = -1 * speed;
+            }
+            if (currentSwipe.x < 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)//left
+            {
+                Debug.Log("left");
+                moveX = -1 * speed;
+            }
+            if (currentSwipe.x > 0 &&  currentSwipe.y > -0.5f &&  currentSwipe.y < 0.5f)//right
+            {
+                Debug.Log("right");
+                moveX = 1 * speed;
+            }
+        }
+        
+    }
+
+    float moveX = 0f;
+    float moveY = 0f;
     void Update()
     {
         if (!load) return;
-
 
         MoveEnemy();
         UpdateTimer();
@@ -210,10 +254,16 @@ public class GameLogic : MonoBehaviour
         {
             AutoFloodFill();
         }
+#if UNITY_EDITOR
+        //SwipeMouse();
+         moveX = Input.GetAxisRaw("Horizontal") * speed;
+         moveY = Input.GetAxisRaw("Vertical") * speed;
+#else
 
-        float moveX = Input.GetAxisRaw("Horizontal") * speed;
-        float moveY = Input.GetAxisRaw("Vertical") * speed;
+#endif
 
+        Debug.Log(moveX);
+        Debug.Log(moveY);
         if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
         {
             moveX = 0f;
@@ -261,7 +311,7 @@ public class GameLogic : MonoBehaviour
                     points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.Log("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
             }
@@ -298,7 +348,7 @@ public class GameLogic : MonoBehaviour
             }
             oldgridpos = gridpos;
 
-         
+
         }
     }
 
@@ -306,7 +356,7 @@ public class GameLogic : MonoBehaviour
     {
         //TODO//
         if (!load) return;
-        
+
 
         foreach (var ene in enemies)
         {
@@ -344,7 +394,6 @@ public class GameLogic : MonoBehaviour
                 }
                 else
                 {
-                   // Debug.Log(x_x + " : " + y_y);
                     tex.SetPixel(x_x, y_y, Color.red);
                     tex.Apply();
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
@@ -352,10 +401,6 @@ public class GameLogic : MonoBehaviour
                 ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
 
             }
-            //else if(map[x_x][y_y] == 33)
-            //{
-            //    ene.gameObject.SetActive(false);
-            //}
 
             if (map[x_x][y_y] == 1)
             {
@@ -384,7 +429,7 @@ public class GameLogic : MonoBehaviour
 
     void AutoFloodFill()
     {
-       // Debug.Log("AutoFloodFill");
+        // Debug.Log("AutoFloodFill");
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
 
         CheckPoins();
@@ -402,13 +447,10 @@ public class GameLogic : MonoBehaviour
         var angle = Mathf.Atan2(difference.y, difference.x);
         var middlePoint = (lastPoint + preLastPoint) / 2;
         var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1.5f, Mathf.Sin(angle - Mathf.PI / 2) * 1.5f, 0f);
-        var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1.5f, Mathf.Sin(angle + Mathf.PI / 2) * 1.5f, 0f);
+        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1.5f, Mathf.Sin(angle + Mathf.PI / 2) * 1.5f, 0f);
 
-       
-
-
-        Debug.Log(middleLeft);
-        Debug.Log(middleRight);
+        //   Debug.Log(middleLeft);
+        //  Debug.Log(middleRight);
 
         tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
         tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
@@ -418,16 +460,12 @@ public class GameLogic : MonoBehaviour
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
-        if(countLeft == 0 && countRight == 0)
-        {
-
-        }
 
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
-        Debug.Log(countLeft + " : " + countRight);
-        Debug.Log("--------------------------------------");
+        //   Debug.Log(countLeft + " : " + countRight);
+        //   Debug.Log("--------------------------------------");
 
         if (countLeft <= countRight)
             paintedPixels += countLeft;
@@ -449,10 +487,9 @@ public class GameLogic : MonoBehaviour
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
                 ));
 
-        
-        tex.Apply(); 
+
+        tex.Apply();
     }
- 
 
     private int TryToFill(int x, int y)
     {
@@ -487,7 +524,7 @@ public class GameLogic : MonoBehaviour
     {
         var color = tex.GetPixel(x, y);
 
-        if (x >= 0  && x <= xSize - 1 && y >= 0 && y <= ySize - 1 && map[x][y] == 2)
+        if (x >= 0 && x <= xSize - 1 && y >= 0 && y <= ySize - 1 && map[x][y] == 2)
         {
             foreach (var ene in enemies)
             {

@@ -7,6 +7,7 @@ using System;
 public class GameView : GameLogic
 {
 
+    [Header("Game View element")]
     public List<GameObject> Hearts = new List<GameObject>();
     public GameObject StartGamePanel;
     public GameObject TopPanel;
@@ -17,7 +18,6 @@ public class GameView : GameLogic
     public Text       txtTimer;
     public Button     BtnNext;
     public Button     BtnStartGame;
-    public Button     BtnShadow;
     public Button     BtnResume;
     public Button     BtnRestart;
     public Button     BtnExit;
