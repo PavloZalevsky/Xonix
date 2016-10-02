@@ -47,15 +47,17 @@ public class GameLogic : MonoBehaviour
     private int paintedPixelsBorder = 0;
     private float percentpainted = 0;
 
-    int CountLife = 3;
-    int CurrentLife = 0;
+    private int CountLife = 3;
+    private int CurrentLife = 0;
+
+    private int level = 1;
 
     public virtual void OnEnable()
     {
         CameraSettings();
     }
 
-    public virtual void StartGame()
+    public virtual void StartGame(bool nextLevel = false)
     {
         map = new byte[xSize][];
         for (int i = 0; i < map.Length; i++)
@@ -91,17 +93,24 @@ public class GameLogic : MonoBehaviour
         oldgridpos = Vector3.up;
         transform.position = pos;
         Player.position = new Vector3(pos.x + 0.5f, pos.y);
-        CurrentLife = CountLife;
         direction = Vector2.zero;
         myPoins.Clear();
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         percentpainted = 0;
-
+        if(nextLevel)
+        {
+            level++;
+        }
+        else
+        {
+            level = 1;
+            CurrentLife = CountLife;
+        }
         ShowPercent(percentpainted, percentWin);
         ShowHeart(CurrentLife);
 
-        SpawnEnemies();
+        SpawnEnemies(level);
         load = true;
     }
 
@@ -134,24 +143,22 @@ public class GameLogic : MonoBehaviour
     }
 
 
-    private void SpawnEnemies()
+    private void SpawnEnemies(int level)
     {
-     // return;
-        //TODO//
         foreach (var item in PoolEnemy)
         {
             item.gameObject.SetActive(false);
         }
         enemies.Clear();
 
-        int countEnemy = UnityEngine.Random.Range(2, 5);
-        Debug.Log(xSize);
-        Debug.Log(ySize);
+        int countEnemy = LevelConfig.instance.levels[level - 1].CountEnemy;
 
         for (int i = 0; i < countEnemy; i++)
         {
             PoolEnemy[i].transform.position = new Vector3(UnityEngine.Random.Range(10, xSize - 10), UnityEngine.Random.Range(10, ySize - 10), 0);
-            Debug.Log(PoolEnemy[i].transform.position);
+            PoolEnemy[i].MAxSpeed = LevelConfig.instance.levels[level - 1].MaxSpeedEnemy;
+            PoolEnemy[i].MinSpeed = LevelConfig.instance.levels[level - 1].MinSpeedEnemy
+                ;
             PoolEnemy[i].gameObject.SetActive(true);
             enemies.Add(PoolEnemy[i]);
         }
@@ -537,4 +544,5 @@ public class GameLogic : MonoBehaviour
     public virtual void ShowHeart(int count) { }
 
     public virtual void GameWin() { }
+
 }

@@ -26,7 +26,7 @@ public class GameView : GameLogic
     {
         //TODO// правильний порядок
         base.OnEnable();
-        BtnStartGame.onClick.AddListener(StartGame);
+        BtnStartGame.onClick.AddListener(OnBtnStartGame);
         BtnResume.onClick.AddListener(OnBtnResumeClick);
         BtnNext.onClick.AddListener(OnBtnNextClick);
 
@@ -44,6 +44,11 @@ public class GameView : GameLogic
         BtnPause.onClick.RemoveAllListeners();
         BtnNext.onClick.RemoveAllListeners();
 
+    }
+
+    void OnBtnStartGame()
+    {
+        StartGame();
     }
 
     void OnBtnResumeClick()
@@ -64,7 +69,8 @@ public class GameView : GameLogic
     }
     void OnBtnNextClick()
     {
-
+        ShowGameWin(false);
+        StartGame(true);
     }
 
 
@@ -89,9 +95,9 @@ public class GameView : GameLogic
         txtPercent.text = string.Format("Progress: {0} / {1}%", (int)CurrentPercent, (int)AllPercent);
     }
 
-    public override void StartGame()
+    public override void StartGame(bool nextLevel = false)
     {
-        base.StartGame();
+        base.StartGame(nextLevel);
 
         OffAll();
         StartGamePanel.SetActive(false);
@@ -126,7 +132,7 @@ public class GameView : GameLogic
         text.text = "You Win :)";
         text.gameObject.SetActive(active);
         ShowShadow(active);
-        BtnRestart.gameObject.SetActive(active);
+        BtnNext.gameObject.SetActive(active);
         BtnExit.gameObject.SetActive(active);
         TopPanel.SetActive(false);
     }
