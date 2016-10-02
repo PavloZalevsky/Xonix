@@ -49,6 +49,10 @@ public class GameLogic : MonoBehaviour
 
     private float time = 0;
 
+    private Vector2 firstPressPos;
+    private Vector2 secondPressPos;
+    private Vector2 currentSwipe;
+
     public virtual void OnEnable()
     {
         CameraSettings();
@@ -65,7 +69,7 @@ public class GameLogic : MonoBehaviour
 
         target.GetComponent<Renderer>().material.mainTexture = tex;
         target.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
-
+        paintedPixelsBorder = 0;
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
@@ -84,7 +88,6 @@ public class GameLogic : MonoBehaviour
 
         tex.Apply();
         allPixel = (xSize * ySize) - paintedPixelsBorder;
-        paintedPixels = 0;
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
         oldgridpos = Vector3.up;
@@ -94,6 +97,7 @@ public class GameLogic : MonoBehaviour
         myPoins.Clear();
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
+        paintedPixels = 0;
         percentpainted = 0;
 
         if (nextLevel)
@@ -168,7 +172,7 @@ public class GameLogic : MonoBehaviour
     {
         float heightMainCamera = Camera.main.orthographicSize * 2f;
         float widtMainCamerh = heightMainCamera * Screen.width / Screen.height;
-        Debug.Log(heightMainCamera);
+
         target.transform.localScale = new Vector3(widtMainCamerh, heightMainCamera - 1, 0.1f);
         target.transform.position = new Vector3(target.transform.position.x, target.transform.position.y - 0.5f, target.transform.position.z);
 
@@ -179,14 +183,7 @@ public class GameLogic : MonoBehaviour
         float heightOtherCamera = 2f * cameraOther.orthographicSize;
         float widthOtherCamera = heightOtherCamera * cameraOther.aspect;
         cameraOther.transform.position = new Vector3(cameraOther.transform.position.x + widthOtherCamera / 2, cameraOther.transform.position.y + heightOtherCamera / 2, -10);
-
-
-
-        Debug.Log(xSize + "   " + ySize + "  AllPixel " + allPixel);
     }
-
-
-    
 
     void UpdateTimer()
     {
@@ -196,11 +193,6 @@ public class GameLogic : MonoBehaviour
 
         Timer(time);
     }
-
-
-    Vector2 firstPressPos;
-    Vector2 secondPressPos;
-    Vector2 currentSwipe;
 
     float wid = 0.8f;
     public void SwipeTouch()
@@ -397,8 +389,6 @@ public class GameLogic : MonoBehaviour
                 }
                 else
                 {
-                    tex.SetPixel(x, y, Color.red);
-                    tex.Apply();
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
                 }
                 ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
@@ -468,15 +458,12 @@ public class GameLogic : MonoBehaviour
             paintedPixels += countRight;
 
 
-
         percentpainted = paintedPixels / (allPixel / 100f);
-
         ShowPercent(percentpainted, percentWin);
 
 
         if (percentpainted >= percentWin)
         {
-            Debug.Log(percentpainted + " : " + percentWin);
             GameWin();
         }
 

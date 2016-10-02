@@ -61,6 +61,7 @@ public class GameView : GameLogic
 
     void OnBtnRestarClick()
     {
+        Time.timeScale = 1;
         ShowGameOver(false);
         StartGame();
     }
