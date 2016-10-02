@@ -437,9 +437,9 @@ public class GameLogic : MonoBehaviour
         //   Debug.Log(middleLeft);
         //  Debug.Log(middleRight);
 
-       tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
-        tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
-        tex.Apply();
+       //tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
+       // tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
+       // tex.Apply();
 
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));

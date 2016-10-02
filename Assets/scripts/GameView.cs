@@ -26,7 +26,6 @@ public class GameView : GameLogic
 
     public override void OnEnable()
     {
-        //TODO// правильний порядок
         base.OnEnable();
         BtnStartGame.onClick.AddListener(OnBtnStartGame);
         BtnResume.onClick.AddListener(OnBtnResumeClick);
@@ -91,8 +90,6 @@ public class GameView : GameLogic
         BtnResume.gameObject.SetActive(active);
     }  
 
-   
-
     public override void StartGame(bool nextLevel = false)
     {
         base.StartGame(nextLevel);
@@ -104,6 +101,7 @@ public class GameView : GameLogic
     public override void GameOver()
     {
         base.GameOver();
+
         ShowGameOver(true);
     }
 
@@ -120,6 +118,7 @@ public class GameView : GameLogic
     public override void GameWin()
     {
         base.GameWin();
+
         ShowGameWin(true);
     }
 
