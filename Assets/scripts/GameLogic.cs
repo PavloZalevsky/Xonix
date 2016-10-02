@@ -201,6 +201,8 @@ public class GameLogic : MonoBehaviour
     Vector2 secondPressPos;
     Vector2 currentSwipe;
 
+    float wid = 0.7f;
+
     public void SwipeMouse()
     {
         moveX = 0f;
@@ -215,22 +217,22 @@ public class GameLogic : MonoBehaviour
             currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
             currentSwipe.Normalize();
 
-            if (currentSwipe.y > 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) //up
+            if (currentSwipe.y > 0 && currentSwipe.x > wid *-1 && currentSwipe.x < wid) //up
             {
                 Debug.Log("up");
                 moveY = 1 * speed;
             }
-            if (currentSwipe.y < 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) // down
+            if (currentSwipe.y < 0 && currentSwipe.x > wid * -1 && currentSwipe.x < wid) // down
             {
                 Debug.Log("down");
                 moveY = -1 * speed;
             }
-            if (currentSwipe.x < 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)//left
+            if (currentSwipe.x < 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//left
             {
                 Debug.Log("left");
                 moveX = -1 * speed;
             }
-            if (currentSwipe.x > 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)//right
+            if (currentSwipe.x > 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//right
             {
                 Debug.Log("right");
                 moveX = 1 * speed;
@@ -256,22 +258,22 @@ public class GameLogic : MonoBehaviour
 
                 currentSwipe.Normalize();
 
-                if (currentSwipe.y > 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) //up
+                if (currentSwipe.y > 0 && currentSwipe.x > wid * -1  && currentSwipe.x < wid) //up
                 {
                     Debug.Log("up");
                     moveY = 1 * speed;
                 }
-                if (currentSwipe.y < 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f)// down
+                if (currentSwipe.y < 0 && currentSwipe.x > wid * -1f && currentSwipe.x < wid)// down
                 {
                     Debug.Log("down");
                     moveY = -1 * speed;
                 }
-                if (currentSwipe.x < 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)//left
+                if (currentSwipe.x < 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//left
                 {
                     Debug.Log("left");
                     moveX = -1 * speed;
                 }
-                if (currentSwipe.x > 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)//right
+                if (currentSwipe.x > 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//right
                 {
                     Debug.Log("right");
                     moveX = 1 * speed;
@@ -294,9 +296,9 @@ public class GameLogic : MonoBehaviour
             AutoFloodFill();
         }
 #if UNITY_EDITOR
-        //SwipeMouse();
-        moveX = Input.GetAxisRaw("Horizontal") * speed;
-        moveY = Input.GetAxisRaw("Vertical") * speed;
+        SwipeMouse();
+     //   moveX = Input.GetAxisRaw("Horizontal") * speed;
+       // moveY = Input.GetAxisRaw("Vertical") * speed;
 #else
         SwipeTouch();
 #endif
