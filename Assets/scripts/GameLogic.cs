@@ -202,45 +202,7 @@ public class GameLogic : MonoBehaviour
     Vector2 secondPressPos;
     Vector2 currentSwipe;
 
-    float wid = 0.4f;
-
-    public void SwipeMouse()
-    {
-        moveX = 0f;
-        moveY = 0f;
-        if (Input.GetMouseButtonDown(0))
-        {
-            firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            secondPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
-            currentSwipe.Normalize();
-
-            if (currentSwipe.y > 0 && currentSwipe.x > wid *-1 && currentSwipe.x < wid) //up
-            {
-                Debug.Log("up");
-                moveY = 1 * speed;
-            }
-            if (currentSwipe.y < 0 && currentSwipe.x > wid * -1 && currentSwipe.x < wid) // down
-            {
-                Debug.Log("down");
-                moveY = -1 * speed;
-            }
-            if (currentSwipe.x < 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//left
-            {
-                Debug.Log("left");
-                moveX = -1 * speed;
-            }
-            if (currentSwipe.x > 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//right
-            {
-                Debug.Log("right");
-                moveX = 1 * speed;
-            }
-        }
-
-    }
+    float wid = 0.8f;
     public void SwipeTouch()
     {
         moveX = 0f;
@@ -252,7 +214,7 @@ public class GameLogic : MonoBehaviour
             {
                 firstPressPos = new Vector2(t.position.x, t.position.y);
             }
-            if (t.phase == TouchPhase.Ended)
+            if (t.phase == TouchPhase.Moved)
             {
                 secondPressPos = new Vector2(t.position.x, t.position.y);
                 currentSwipe = new Vector3(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
@@ -297,9 +259,8 @@ public class GameLogic : MonoBehaviour
             AutoFloodFill();
         }
 #if UNITY_EDITOR
-       // SwipeMouse();
-       moveX = Input.GetAxisRaw("Horizontal") * speed;
-        moveY = Input.GetAxisRaw("Vertical") * speed;
+      moveX = Input.GetAxisRaw("Horizontal") * speed;
+       moveY = Input.GetAxisRaw("Vertical") * speed;
 #else
         SwipeTouch();
 #endif
@@ -514,7 +475,10 @@ public class GameLogic : MonoBehaviour
 
 
         if (percentpainted >= percentWin)
+        {
+            Debug.Log(percentpainted + " : " + percentWin);
             GameWin();
+        }
 
         //StartCoroutine(FloodFillCorot(
         //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
