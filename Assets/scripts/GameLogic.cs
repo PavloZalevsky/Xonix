@@ -104,6 +104,28 @@ public class GameLogic : MonoBehaviour
         load = true;
     }
 
+
+    private void Restart()
+    {
+
+        pos = new Vector3(xSize / 2, 0, 0);
+        gridpos = pos;
+        oldgridpos = Vector2.zero;
+        transform.position = pos;
+        Player.position = new Vector3(pos.x + 0.5f, pos.y);
+        direction = Vector2.zero;
+        foreach (var item in myPoins)
+        {
+            map[(int)item.x][(int)item.y] = 0;
+            tex.SetPixel((int)item.x, (int)item.y, Color.blue);
+        }
+        tex.Apply();
+        myPoins.Clear();
+        points.Clear();
+
+    }
+
+
     private void SpawnEnemies()
     {
      // return;
@@ -151,11 +173,7 @@ public class GameLogic : MonoBehaviour
 
     private Vector2 direction;
 
-    private void Restart()
-    {
-        load = false;
-        StartGame();
-    }
+
 
     private List<Vector3> points = new List<Vector3>();
 
@@ -164,6 +182,8 @@ public class GameLogic : MonoBehaviour
     void Update()
     {
         if (!load) return;
+
+
         MoveEnemy();
         if (Input.GetKeyDown(KeyCode.U))
         {
@@ -319,7 +339,6 @@ public class GameLogic : MonoBehaviour
             if (map[x_x][y_y] == 1)
             {
                 Restart();
-                break;
             }
 
             if (map[x_x][y_y] != 33 && map[x_x][y_y] != 1)
