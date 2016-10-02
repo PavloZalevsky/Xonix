@@ -9,6 +9,7 @@ public class GameLogic : MonoBehaviour
     [Header("Game Logic element")]
     [Range(10f, 85)]
     public float percentWin = 85;
+    public float PlayerSpeed = 20.0f;
 
     public Transform Player;
     public Camera cameraOther;
@@ -22,7 +23,6 @@ public class GameLogic : MonoBehaviour
     public List<Enemy> PoolEnemy = new List<Enemy>();
     private List<Enemy> enemies = new List<Enemy>();
 
-    private float speed = 25.0f;
 
     private int xSize = 0;
     private int ySize = 0;
@@ -221,22 +221,22 @@ public class GameLogic : MonoBehaviour
                 if (currentSwipe.y > 0 && currentSwipe.x > wid * -1  && currentSwipe.x < wid) //up
                 {
                     Debug.Log("up");
-                    moveY = 1 * speed;
+                    moveY = 1 * PlayerSpeed;
                 }
                 if (currentSwipe.y < 0 && currentSwipe.x > wid * -1f && currentSwipe.x < wid)// down
                 {
                     Debug.Log("down");
-                    moveY = -1 * speed;
+                    moveY = -1 * PlayerSpeed;
                 }
                 if (currentSwipe.x < 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//left
                 {
                     Debug.Log("left");
-                    moveX = -1 * speed;
+                    moveX = -1 * PlayerSpeed;
                 }
                 if (currentSwipe.x > 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//right
                 {
                     Debug.Log("right");
-                    moveX = 1 * speed;
+                    moveX = 1 * PlayerSpeed;
                 }
             }
         }
@@ -257,8 +257,8 @@ public class GameLogic : MonoBehaviour
     private void MovePlayer()
     {
 #if UNITY_EDITOR
-        moveX = Input.GetAxisRaw("Horizontal") * speed;
-        moveY = Input.GetAxisRaw("Vertical") * speed;
+        moveX = Input.GetAxisRaw("Horizontal") * PlayerSpeed;
+        moveY = Input.GetAxisRaw("Vertical") * PlayerSpeed;
 #else
         SwipeTouch();
 #endif
@@ -312,6 +312,7 @@ public class GameLogic : MonoBehaviour
             }
         }
 
+   
 
         if (oldgridpos != gridpos)
         {
