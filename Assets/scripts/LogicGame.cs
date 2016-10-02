@@ -194,6 +194,8 @@ public class LogicGame : MonoBehaviour
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
         {
             tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
+            tex.Apply();
+
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
 
@@ -211,7 +213,7 @@ public class LogicGame : MonoBehaviour
             }
             catch(Exception e)
             {
-                Debug.Log("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
+                Debug.LogError("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
             }
         }
 
@@ -338,7 +340,7 @@ public class LogicGame : MonoBehaviour
 
         CheckPoins();
         CreateMewBorder();
-       // direction = Vector2.zero;
+        direction = Vector2.zero;
         // 
     }
 
