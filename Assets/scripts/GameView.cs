@@ -13,6 +13,7 @@ public class GameView : GameLogic
     public GameObject Shadow;
     public Text       text;
     public Text       txtPercent;
+    public Button     BtnNext;
     public Button     BtnStartGame;
     public Button     BtnShadow;
     public Button     BtnResume;
@@ -23,9 +24,12 @@ public class GameView : GameLogic
 
     public override void OnEnable()
     {
+        //TODO// правильний порядок
         base.OnEnable();
         BtnStartGame.onClick.AddListener(StartGame);
         BtnResume.onClick.AddListener(OnBtnResumeClick);
+        BtnNext.onClick.AddListener(OnBtnNextClick);
+
         BtnRestart.onClick.AddListener(OnBtnRestarClick);
         BtnExit.onClick.AddListener(OnBtnExitClick);
         BtnPause.onClick.AddListener(OnBtnPauseClick);
@@ -38,6 +42,8 @@ public class GameView : GameLogic
         BtnRestart.onClick.RemoveAllListeners();
         BtnExit.onClick.RemoveAllListeners();
         BtnPause.onClick.RemoveAllListeners();
+        BtnNext.onClick.RemoveAllListeners();
+
     }
 
     void OnBtnResumeClick()
@@ -56,8 +62,13 @@ public class GameView : GameLogic
     {
 
     }
+    void OnBtnNextClick()
+    {
 
-    void OnBtnPauseClick()
+    }
+
+
+        void OnBtnPauseClick()
     {
         Time.timeScale = 0;
         ShowPause(true);
@@ -69,13 +80,7 @@ public class GameView : GameLogic
         BtnRestart.gameObject.SetActive(active);
         BtnExit.gameObject.SetActive(active);
         BtnResume.gameObject.SetActive(active);
-    }
-
-    public void ShoWinGame(bool active)
-    {
-        text.text = "You Win :)";
-        text.gameObject.SetActive(active);
-    }
+    }  
 
     public override void ShowPercent(float CurrentPercent, float AllPercent)
     {
@@ -102,6 +107,23 @@ public class GameView : GameLogic
     private void ShowGameOver(bool active)
     {
         text.text = "You Lose :(";
+        text.gameObject.SetActive(active);
+        ShowShadow(active);
+        BtnRestart.gameObject.SetActive(active);
+        BtnExit.gameObject.SetActive(active);
+        TopPanel.SetActive(false);
+    }
+
+    public override void GameWin()
+    {
+        base.GameWin();
+
+        ShowGameWin(true);
+    }
+
+    private void ShowGameWin(bool active)
+    {
+        text.text = "You Win :)";
         text.gameObject.SetActive(active);
         ShowShadow(active);
         BtnRestart.gameObject.SetActive(active);

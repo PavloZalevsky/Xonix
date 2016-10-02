@@ -428,10 +428,8 @@ public class GameLogic : MonoBehaviour
         ShowPercent(percentpainted, percentWin);
 
 
-        if (percentpainted > percentWin)
-            Debug.Log("WIN!!!!!!!!!!!!!!");
-
-       // Debug.Log(percentpainted);
+        if (percentpainted >= percentWin)
+            GameWin();
 
         StartCoroutine(FloodFillCorot(
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
@@ -533,6 +531,10 @@ public class GameLogic : MonoBehaviour
     }
 
     public virtual void ShowPercent(float CurrentPercent, float AllPercent) { }
+
     public virtual void GameOver() { }
+
     public virtual void ShowHeart(int count) { }
+
+    public virtual void GameWin() { }
 }
