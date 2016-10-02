@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 public class GameView : GameLogic
 {
@@ -47,7 +48,8 @@ public class GameView : GameLogic
 
     void OnBtnRestarClick()
     {
-
+        ShowGameOver(false);
+        StartGame();
     }
 
     void OnBtnExitClick()
@@ -71,9 +73,8 @@ public class GameView : GameLogic
 
     public void ShoWinGame(bool active)
     {
-        text.text = "You Win!!!";
+        text.text = "You Win :)";
         text.gameObject.SetActive(active);
-
     }
 
     public override void ShowPercent(float CurrentPercent, float AllPercent)
@@ -91,7 +92,22 @@ public class GameView : GameLogic
         StartGamePanel.SetActive(false);
     }
 
+    public override void GameOver()
+    {
+        base.GameOver();
 
+        ShowGameOver(true);
+    }
+
+    private void ShowGameOver(bool active)
+    {
+        text.text = "You Lose :(";
+        text.gameObject.SetActive(active);
+        ShowShadow(active);
+        BtnRestart.gameObject.SetActive(active);
+        BtnExit.gameObject.SetActive(active);
+        TopPanel.SetActive(false);
+    }
 
     void ShowShadow(bool active)
     {
@@ -108,6 +124,19 @@ public class GameView : GameLogic
         BtnResume.gameObject.SetActive(false);
     }
 
+    public override void ShowHeart(int count)
+    {
+        base.ShowHeart(count);
+
+        for (int i = 0; i < count || i < Hearts.Count; i++)
+        {
+            if (i < count)
+                Hearts[i].gameObject.SetActive(true);
+            else
+                Hearts[i].gameObject.SetActive(false);
+
+        }
+    }
 
 
 }

@@ -97,8 +97,9 @@ public class GameLogic : MonoBehaviour
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         percentpainted = 0;
-        ShowPercent(percentpainted, percentWin);
 
+        ShowPercent(percentpainted, percentWin);
+        ShowHeart(CurrentLife);
 
         SpawnEnemies();
         load = true;
@@ -122,6 +123,13 @@ public class GameLogic : MonoBehaviour
         tex.Apply();
         myPoins.Clear();
         points.Clear();
+
+        if(--CurrentLife == 0)
+        {
+            GameOver();
+        }
+        ShowHeart(CurrentLife);
+
 
     }
 
@@ -525,4 +533,6 @@ public class GameLogic : MonoBehaviour
     }
 
     public virtual void ShowPercent(float CurrentPercent, float AllPercent) { }
+    public virtual void GameOver() { }
+    public virtual void ShowHeart(int count) { }
 }
