@@ -193,9 +193,28 @@ public class LogicGame : MonoBehaviour
 
         if (direction.x != 0 && moveX == 0 || direction.x == 0 && moveX != 0 || direction.y != 0 && moveY == 0 || direction.y == 0 && moveY != 0)
         {
-           // tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
+            tex.SetPixel(Mathf.RoundToInt(gridpos.x), Mathf.RoundToInt(gridpos.y), Color.black);
             points.Add(new Vector3(gridpos.x, gridpos.y));
         }
+
+        if (oldgridpos.x > 0 && oldgridpos.x < xSize - 1 && oldgridpos.y > 0 && oldgridpos.y < ySize - 1)
+        {
+            try
+            {
+                if (map[(int)oldgridpos.x][(int)oldgridpos.y] == 33 &&
+                    ((map[(int)gridpos.x + 1][(int)gridpos.y] == 0 && map[(int)gridpos.x - 1][(int)gridpos.y] == 0)
+                     || (map[(int)gridpos.x][(int)gridpos.y + 1] == 0 && map[(int)gridpos.x][(int)gridpos.y - 1] == 0)))
+                {
+                    tex.SetPixel(Mathf.RoundToInt(oldgridpos.x), Mathf.RoundToInt(oldgridpos.y), Color.black);
+                    points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.Log("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
+            }
+        }
+
 
         if (oldgridpos != gridpos)
         {
@@ -314,7 +333,7 @@ public class LogicGame : MonoBehaviour
 
     void AutoFloodFill()
     {
-        Debug.Log("AutoFloodFill");
+       // Debug.Log("AutoFloodFill");
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
 
         CheckPoins();
@@ -331,16 +350,33 @@ public class LogicGame : MonoBehaviour
         var difference = lastPoint - preLastPoint;
         var angle = Mathf.Atan2(difference.y, difference.x);
         var middlePoint = (lastPoint + preLastPoint) / 2;
-        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1, Mathf.Sin(angle - Mathf.PI / 2) * 1, 0f);
-        var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1, Mathf.Sin(angle + Mathf.PI / 2) * 1, 0f);
+        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1.5f, Mathf.Sin(angle - Mathf.PI / 2) * 1.5f, 0f);
+        var middleRight =  middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1.5f, Mathf.Sin(angle + Mathf.PI / 2) * 1.5f, 0f);
+
+       
+
+
+        Debug.Log(middleLeft);
+        Debug.Log(middleRight);
+
+        tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
+        tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
+        tex.Apply();
+
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
+
+        if(countLeft == 0 && countRight == 0)
+        {
+
+        }
 
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
         Debug.Log(countLeft + " : " + countRight);
+        Debug.Log("--------------------------------------");
 
         if (countLeft <= countRight)
             paintedPixels += countLeft;
