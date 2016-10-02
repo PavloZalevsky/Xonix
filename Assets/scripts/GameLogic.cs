@@ -115,7 +115,7 @@ public class GameLogic : MonoBehaviour
         ShowLevel(level);
 
         SpawnEnemies(level);
-        Invoke("Loading", 0.3f);
+        Invoke("Loading", 0.5f);
     }
 
     void Loading()
@@ -419,6 +419,7 @@ public class GameLogic : MonoBehaviour
 
         CheckPoins();
         CreateMewBorder();
+      
         direction = Vector2.zero;
         // 
     }
@@ -431,8 +432,8 @@ public class GameLogic : MonoBehaviour
         var difference = lastPoint - preLastPoint;
         var angle = Mathf.Atan2(difference.y, difference.x);
         var middlePoint = (lastPoint + preLastPoint) / 2;
-        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1.5f, Mathf.Sin(angle - Mathf.PI / 2) * 1.5f, 0f);
-        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1.5f, Mathf.Sin(angle + Mathf.PI / 2) * 1.5f, 0f);
+        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1f, Mathf.Sin(angle - Mathf.PI / 2) * 1f, 0f);
+        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1f, Mathf.Sin(angle + Mathf.PI / 2) * 1f, 0f);
 
         //   Debug.Log(middleLeft);
         //  Debug.Log(middleRight);
