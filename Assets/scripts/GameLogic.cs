@@ -109,6 +109,7 @@ public class GameLogic : MonoBehaviour
         }
         ShowPercent(percentpainted, percentWin);
         ShowHeart(CurrentLife);
+        ShowLevel(level);
 
         SpawnEnemies(level);
         load = true;
@@ -544,5 +545,8 @@ public class GameLogic : MonoBehaviour
     public virtual void ShowHeart(int count) { }
 
     public virtual void GameWin() { }
+
+    public virtual void ShowLevel(int Level) { }
+
 
 }

@@ -13,6 +13,7 @@ public class GameView : GameLogic
     public GameObject Shadow;
     public Text       text;
     public Text       txtPercent;
+    public Text       txtLevel;
     public Button     BtnNext;
     public Button     BtnStartGame;
     public Button     BtnShadow;
@@ -88,12 +89,7 @@ public class GameView : GameLogic
         BtnResume.gameObject.SetActive(active);
     }  
 
-    public override void ShowPercent(float CurrentPercent, float AllPercent)
-    {
-        base.ShowPercent(CurrentPercent, AllPercent);
-
-        txtPercent.text = string.Format("Progress: {0} / {1}%", (int)CurrentPercent, (int)AllPercent);
-    }
+   
 
     public override void StartGame(bool nextLevel = false)
     {
@@ -164,6 +160,20 @@ public class GameView : GameLogic
                 Hearts[i].gameObject.SetActive(false);
 
         }
+    }
+
+    public override void ShowPercent(float CurrentPercent, float AllPercent)
+    {
+        base.ShowPercent(CurrentPercent, AllPercent);
+
+        txtPercent.text = string.Format("Progress: {0} / {1}%", (int)CurrentPercent, (int)AllPercent);
+    }
+
+    public override void ShowLevel(int Level)
+    {
+        base.ShowLevel(Level);
+
+        txtLevel.text =  "Level: " + Level;
     }
 
 
