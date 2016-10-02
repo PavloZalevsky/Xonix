@@ -3,20 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class View : MonoBehaviour {
+public class GameView : GameLogic
+{
 
     public List<GameObject> Hearts = new List<GameObject>();
     public GameObject TopPanel;
     public GameObject Shadow;
     public Text       text;
+    public Text       txtPercent;
     public Button     BtnShadow;
     public Button     BtnResume;
     public Button     BtnRestart;
     public Button     BtnExit;
     public Button     BtnPause;
 
-    void OnEnable()
+
+    public override void OnEnable()
     {
+        base.OnEnable();
+
         BtnResume.onClick.AddListener(OnBtnResumeClick);
         BtnRestart.onClick.AddListener(OnBtnRestarClick);
         BtnExit.onClick.AddListener(OnBtnExitClick);
@@ -69,9 +74,16 @@ public class View : MonoBehaviour {
 
     }
 
+    public override void ShowPercent(float CurrentPercent, float AllPercent)
+    {
+        base.ShowPercent(CurrentPercent, AllPercent);
+
+        txtPercent.text = string.Format("Progress: {0} / {1}%", (int)CurrentPercent, (int)AllPercent);
+    }
 
 
-        void ShowShadow(bool active)
+
+    void ShowShadow(bool active)
     {
         Shadow.SetActive(active);
     }

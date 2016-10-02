@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class LogicGame : MonoBehaviour
+public class GameLogic : MonoBehaviour
 {
     [Header("Settigs Game")]
     [Range(10f, 85)]
@@ -13,7 +13,7 @@ public class LogicGame : MonoBehaviour
 
 
 
-    public int DensityPixels = 10;
+    public int DensityPixels = 4;
     public Transform Player;
     public Camera cameraOther;
 
@@ -50,7 +50,7 @@ public class LogicGame : MonoBehaviour
     int CountLife = 3;
     int CurrentLife = 0;
 
-    void OnEnable()
+    public virtual void OnEnable()
     {
         CameraSettings();
     }
@@ -97,6 +97,8 @@ public class LogicGame : MonoBehaviour
         points.Clear();
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
         percentpainted = 0;
+        ShowPercent(percentpainted, percentWin);
+
 
         SpawnEnemies();
         load = true;
@@ -113,10 +115,13 @@ public class LogicGame : MonoBehaviour
         enemies.Clear();
 
         int countEnemy = UnityEngine.Random.Range(2, 5);
+        Debug.Log(xSize);
+        Debug.Log(ySize);
 
         for (int i = 0; i < countEnemy; i++)
         {
             PoolEnemy[i].transform.position = new Vector3(UnityEngine.Random.Range(10, xSize - 10), UnityEngine.Random.Range(10, ySize - 10), 0);
+            Debug.Log(PoolEnemy[i].transform.position);
             PoolEnemy[i].gameObject.SetActive(true);
             enemies.Add(PoolEnemy[i]);
         }
@@ -158,6 +163,7 @@ public class LogicGame : MonoBehaviour
 
     void Update()
     {
+        if (!load) return;
         MoveEnemy();
         if (Input.GetKeyDown(KeyCode.U))
         {
@@ -392,6 +398,9 @@ public class LogicGame : MonoBehaviour
 
         percentpainted = paintedPixels / (allPixel / 100f);
 
+        ShowPercent(percentpainted, percentWin);
+
+
         if (percentpainted > percentWin)
             Debug.Log("WIN!!!!!!!!!!!!!!");
 
@@ -495,4 +504,6 @@ public class LogicGame : MonoBehaviour
 
         myPoins.Clear();
     }
+
+    public virtual void ShowPercent(float CurrentPercent, float AllPercent) { }
 }
