@@ -33,6 +33,10 @@ public class GameLogic : MonoBehaviour
 
     private bool load = false;
 
+    private Vector2 direction;
+    private List<Vector3> points = new List<Vector3>();
+    private List<Vector2> myPoins = new List<Vector2>();
+
     private int allPixel = 0;
     private int paintedPixels = 0;
     private int paintedPixelsBorder = 0;
@@ -181,13 +185,7 @@ public class GameLogic : MonoBehaviour
     }
 
 
-    private Vector2 direction;
-
-
-
-    private List<Vector3> points = new List<Vector3>();
-
-    private List<Vector2> myPoins = new List<Vector2>();
+    
 
     void UpdateTimer()
     {
@@ -303,8 +301,8 @@ public class GameLogic : MonoBehaviour
         SwipeTouch();
 #endif
 
-        Debug.Log(moveX);
-        Debug.Log(moveY);
+       // Debug.Log(moveX);
+      //  Debug.Log(moveY);
         if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
         {
             moveX = 0f;
