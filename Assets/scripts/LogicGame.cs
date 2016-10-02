@@ -109,7 +109,7 @@ public class LogicGame : MonoBehaviour
         }
         enemies.Clear();
 
-        int countEnemy = UnityEngine.Random.Range(2, 4);
+        int countEnemy = UnityEngine.Random.Range(4, 8);
 
         for (int i = 0; i < countEnemy; i++)
         {
@@ -276,6 +276,9 @@ public class LogicGame : MonoBehaviour
                 }
                 else
                 {
+                   // Debug.Log(x_x + " : " + y_y);
+                 //   tex.SetPixel(x_x, y_y, Color.red);
+                 //   tex.Apply();
                     ene.directionEnemy = new Vector2(ene.directionEnemy.x * -1, ene.directionEnemy.y * -1);
                 }
                 ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
@@ -292,19 +295,21 @@ public class LogicGame : MonoBehaviour
                 break;
             }
 
-           
-            map[x_x][y_y] = 2;
-            ene.xCur = x_x;
-            ene.yCur = y_y;
-
-            if (ene.LastPoz != Vector2.zero)
+            if (map[x_x][y_y] != 33)
             {
+                map[x_x][y_y] = 2;
+                ene.xCur = x_x;
+                ene.yCur = y_y;
 
-                map[(int)ene.LastPoz.x][(int)ene.LastPoz.y] = ene.LastSumbl;
+                if (ene.LastPoz != Vector2.zero)
+                {
+
+                    map[(int)ene.LastPoz.x][(int)ene.LastPoz.y] = ene.LastSumbl;
+                }
+
+                ene.LastPoz = new Vector2(x_x, y_y);
+                ene.LastSumbl = map[x_x][y_y];
             }
-
-            ene.LastPoz = new Vector2(x_x, y_y);
-            ene.LastSumbl = map[x_x][y_y];
 
             ene.transform.Translate(ene.directionEnemy * Time.deltaTime * ene.speedEnemy, Space.World);
         }
