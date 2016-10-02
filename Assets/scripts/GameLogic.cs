@@ -165,7 +165,7 @@ public class GameLogic : MonoBehaviour
         for (int i = 0; i < countEnemy; i++)
         {
             PoolEnemy[i].transform.position = new Vector3(UnityEngine.Random.Range(10, xSize - 10), UnityEngine.Random.Range(10, ySize - 10), 0);
-            PoolEnemy[i].MAxSpeed = LevelConfig.instance.levels[level - 1].MaxSpeedEnemy;
+            PoolEnemy[i].MaxSpeed = LevelConfig.instance.levels[level - 1].MaxSpeedEnemy;
             PoolEnemy[i].MinSpeed = LevelConfig.instance.levels[level - 1].MinSpeedEnemy
                 ;
             PoolEnemy[i].gameObject.SetActive(true);

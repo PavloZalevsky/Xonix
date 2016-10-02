@@ -8,14 +8,12 @@ public class Enemy : MonoBehaviour {
     [HideInInspector]
     public float speedEnemy = 20;
     [HideInInspector]
-    public Vector2 LastPoz = Vector2.zero;
-    public byte LastSumbl = 100;
-    public int MAxSpeed = 0;
+    public int MaxSpeed = 0;
     [HideInInspector]
     public int MinSpeed = 0;
 
     void OnEnable()
     {
-        speedEnemy = Random.Range(MinSpeed, MAxSpeed);
+        speedEnemy = Random.Range(MinSpeed, MaxSpeed);
     }
 }
