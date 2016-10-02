@@ -55,7 +55,7 @@ public class GameLogic : MonoBehaviour
         CameraSettings();
     }
 
-    void Start()
+    public virtual void StartGame()
     {
         map = new byte[xSize][];
         for (int i = 0; i < map.Length; i++)
@@ -154,7 +154,7 @@ public class GameLogic : MonoBehaviour
     private void Restart()
     {
         load = false;
-        Start();
+        StartGame();
     }
 
     private List<Vector3> points = new List<Vector3>();

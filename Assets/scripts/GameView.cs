@@ -7,10 +7,12 @@ public class GameView : GameLogic
 {
 
     public List<GameObject> Hearts = new List<GameObject>();
+    public GameObject StartGamePanel;
     public GameObject TopPanel;
     public GameObject Shadow;
     public Text       text;
     public Text       txtPercent;
+    public Button     BtnStartGame;
     public Button     BtnShadow;
     public Button     BtnResume;
     public Button     BtnRestart;
@@ -21,13 +23,12 @@ public class GameView : GameLogic
     public override void OnEnable()
     {
         base.OnEnable();
-
+        BtnStartGame.onClick.AddListener(StartGame);
         BtnResume.onClick.AddListener(OnBtnResumeClick);
         BtnRestart.onClick.AddListener(OnBtnRestarClick);
         BtnExit.onClick.AddListener(OnBtnExitClick);
         BtnPause.onClick.AddListener(OnBtnPauseClick);
-
-        OffAll();
+        StartGamePanel.SetActive(true);
     }
     void OnDisable()
     {
@@ -79,6 +80,14 @@ public class GameView : GameLogic
         base.ShowPercent(CurrentPercent, AllPercent);
 
         txtPercent.text = string.Format("Progress: {0} / {1}%", (int)CurrentPercent, (int)AllPercent);
+    }
+
+    public override void StartGame()
+    {
+        base.StartGame();
+
+        OffAll();
+        StartGamePanel.SetActive(false);
     }
 
 
