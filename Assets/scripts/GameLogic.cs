@@ -126,6 +126,7 @@ public class GameLogic : MonoBehaviour
 
     private void Restart()
     {
+        CurrentLife = CountLife;
 
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
@@ -429,44 +430,49 @@ public class GameLogic : MonoBehaviour
         bool found = false;
         Debug.Log("-" + points.Count);
         List<Vector3> poinsToCheck = new List<Vector3>();
-
+        int fi = 0;
         for (int i = 0; i < points.Count -1; i++)
         {
             if (points[i].x <= 0 || points[i].x >= xSize - 1 || points[i].y <= 0 || points[i].y >= ySize - 1)
                 continue;
 
-            if (map[(int)points[i].x + 1][(int)points[i].y] == 1 || map[(int)points[i].x - 1][(int)points[i].y] == 1 || map[(int)points[i].x][(int)points[i].y + 1] == 1 || map[(int)points[i].x][(int)points[i].y - 1] == 1)
+            int x = (int)points[i].x;
+            int y = (int)points[i].y;
+
+            if ((map[x + 1][y] == 1 && map[x - 1][y] == 1 && (map[x][y + 1] == 1 && map[x][y - 1] == 0 || map[x][y + 1] == 0 && map[x][y - 1] == 1))
+                || (map[x][y + 1] == 1 && map[x][y - 1] == 1 && (map[x + 1][y] == 1 && map[x - 1][y] == 0 || map[x + 1][y] == 0 && map[x - 1][y] == 1)))
             {
-                tex.SetPixel(Mathf.RoundToInt(points[i].x), Mathf.RoundToInt(points[i].y), Color.red);
-                tex.Apply();
-                Debug.Log("!");
+                if (i - fi == 1)
+                    continue;
+                    fi = i;
+
                 poinsToCheck.Add(points[i]);
                 poinsToCheck.Add(points[i - 1]);
-                //     found = true;
+                     found = true;
             }
-            //    Debug.Log(poinsToCheck.Count);
+           // Debug.Log(poinsToCheck.Count);
 
-            //    //if (points[i].x < 0 || points[i].x > xSize - 1 || points[i].y < 0 || points[i].y > ySize - 1)
-            //    //    continue;
+            //if (points[i].x < 0 || points[i].x > xSize - 1 || points[i].y < 0 || points[i].y > ySize - 1)
+            //    continue;
 
-            //    //if (map[(int)points[i].x + 1][(int)points[i].y] == 33 || map[(int)points[i].x - 1][(int)points[i].y] == 33 || map[(int)points[i].x][(int)points[i].y + 1] == 33 || map[(int)points[i].x][(int)points[i].y - 1] == 33)
-            //    //{
-            //    //    poinsToCheck.Add(points[i]);
-            //    //    poinsToCheck.Add(points[i - 1]);
-            //    //    found = true;
-            //    //}
+            //if (map[(int)points[i].x + 1][(int)points[i].y] == 33 || map[(int)points[i].x - 1][(int)points[i].y] == 33 || map[(int)points[i].x][(int)points[i].y + 1] == 33 || map[(int)points[i].x][(int)points[i].y - 1] == 33)
+            //{
+            //    poinsToCheck.Add(points[i]);
+            //    poinsToCheck.Add(points[i - 1]);
+            //    found = true;
+            //}
         }
-            Debug.Log(poinsToCheck.Count);
+        Debug.Log(poinsToCheck.Count);
 
-        CheckPoi(points.Last(), points[points.Count - 2]);
+           CheckPoi(points.Last(), points[points.Count - 2]);
 
         if (found)
         {
-            for (int i = 0; i < points.Count; i++)
+            for (int i = 0; i < poinsToCheck.Count; i++)
             {
-                if(i %2 != 0)
+                if (i % 2 != 0)
                 {
-                    CheckPoi(points[i-1], points[i]);
+                    CheckPoi(poinsToCheck[i - 1], poinsToCheck[i]);
                 }
             }
         }
@@ -474,21 +480,20 @@ public class GameLogic : MonoBehaviour
 
     private void CheckPoi(Vector3 p1, Vector3 p2)
     {
-        var lastPoint = p1;
+        Debug.Log("CheckPoi"); 
+         var lastPoint = p1;
         var preLastPoint = p2;
 
         var difference = lastPoint - preLastPoint;
         var angle = Mathf.Atan2(difference.y, difference.x);
         var middlePoint = (lastPoint + preLastPoint) / 2;
-        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1f, Mathf.Sin(angle - Mathf.PI / 2) * 1f, 0f);
-        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1f, Mathf.Sin(angle + Mathf.PI / 2) * 1f, 0f);
+        var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1.3f, Mathf.Sin(angle - Mathf.PI / 2) * 1.3f, 0f);
+        var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1.3f, Mathf.Sin(angle + Mathf.PI / 2) * 1.3f, 0f);
 
         //   Debug.Log(middleLeft);
         //  Debug.Log(middleRight);
 
-        tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
-        tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
-        tex.Apply();
+      
 
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
@@ -498,8 +503,8 @@ public class GameLogic : MonoBehaviour
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
 
-        //   Debug.Log(countLeft + " : " + countRight);
-        //   Debug.Log("--------------------------------------");
+           Debug.Log(countLeft + " : " + countRight);
+           Debug.Log("--------------------------------------");
 
         if (countLeft <= countRight)
             paintedPixels += countLeft;
@@ -524,6 +529,10 @@ public class GameLogic : MonoBehaviour
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
                 );
+
+        tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
+        tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
+        tex.Apply();
 
         tex.Apply();
     }
