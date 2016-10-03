@@ -343,7 +343,7 @@ public class GameLogic : MonoBehaviour
             {
                 if (myPoins.Count != 0)
                 {
-                 //   AutoFloodFill();
+                    AutoFloodFill();
                 }
             }
             if (cur != 33 && cur != 1)
@@ -455,7 +455,7 @@ public class GameLogic : MonoBehaviour
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
 
         CheckPoins();
-     //   CreateMewBorder();
+        CreateMewBorder();
         points.Clear();
           direction = Vector2.zero;
         // 
@@ -481,39 +481,35 @@ public class GameLogic : MonoBehaviour
             int x = (int)points[i].x;
             int y = (int)points[i].y;
 
-            //if ((map[x + 1][y] == 1 && map[x - 1][y] == 1 && (map[x][y + 1] == 1 && map[x][y - 1] == 0 || map[x][y + 1] == 0 && map[x][y - 1] == 1))
-            //    || (map[x][y + 1] == 1 && map[x][y - 1] == 1 && (map[x + 1][y] == 1 && map[x - 1][y] == 0 || map[x + 1][y] == 0 && map[x - 1][y] == 1)))
-            //{
-            //    if (i - fi == 1)
-            //        continue;
-            //        fi = i;
+            if ((map[x + 1][y] == 1 && map[x - 1][y] == 1 && (map[x][y + 1] == 1 && map[x][y - 1] == 0 || map[x][y + 1] == 0 && map[x][y - 1] == 1))
+               || (map[x][y + 1] == 1 && map[x][y - 1] == 1 && (map[x + 1][y] == 1 && map[x - 1][y] == 0 || map[x + 1][y] == 0 && map[x - 1][y] == 1)))
+            {
+                //if (i - fi == 1)
+                //    continue;
+                //fi = i;
 
-            //    poinsToCheck.Add(points[i]);
-            //    poinsToCheck.Add(points[i - 1]);
-            //         found = true;
-            //}
+                poinsToCheck.Add(points[i]);
+                poinsToCheck.Add(points[i - 1]);
+                found = true;
+            }
             // Debug.Log(poinsToCheck.Count);
 
             if (points[i].x < 0 || points[i].x > xSize - 1 || points[i].y < 0 || points[i].y > ySize - 1)
                 continue;
 
-            if ((((map[x + 1][y] == 33 && map[x - 1][y] == 1) || (map[x + 1][y] == 1 && map[x - 1][y] == 33)) && (map[x][y + 1] == 1 && map[x][y - 1] == 0 || map[x][y + 1] == 0 && map[x][y - 1] == 1))
-                || (((map[x][y + 1] == 33 && map[x][y - 1] == 1) || (map[x][y + 1] == 1 && map[x][y - 1] == 33)) && (map[x + 1][y] == 1 && map[x - 1][y] == 0 || map[x][y] == 0 && map[x - 1][y] == 1)))
+            if(((map[x + 1][y] == 0 && map[x - 1][y] == 1) || (map[x + 1][y] == 33 && map[x - 1][y] == 1) || (map[x + 1][y] == 1 && map[x - 1][y] == 33) || (map[x + 1][y] == 1 && map[x - 1][y] == 0))
+             &&((map[x][y + 1] == 0 && map[x][y - 1] == 1) || (map[x][y + 1] == 33 && map[x][y - 1] == 1) || (map[x][y + 1] == 1 && map[x][y - 1] == 33) || (map[x][y + 1] == 1 && map[x][y - 1] == 0)))
             {
-                //if (i - xi == 1)
-                //    continue;
-              //  xi = i;
-
-                //if (i > 1)
-                //{
+                if (i > 1)
+                {
                     tex.SetPixel(Mathf.RoundToInt(points[i - 1].x), Mathf.RoundToInt(points[i - 1].y), Color.magenta);
-                    tex.SetPixel(Mathf.RoundToInt(points[i - 2].x), Mathf.RoundToInt(points[i -2].y), Color.white);
+                    tex.SetPixel(Mathf.RoundToInt(points[i].x), Mathf.RoundToInt(points[i].y), Color.white);
                     tex.Apply();
 
                     poinsToCheck.Add(points[i - 1]);
-                    poinsToCheck.Add(points[i - 2]);
+                    poinsToCheck.Add(points[i]);
                     found = true;
-               // }
+                }
             }
         }
         Debug.Log(poinsToCheck.Count);
@@ -579,10 +575,10 @@ public class GameLogic : MonoBehaviour
         //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
         //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
         //        ));
-        //FloodFill(
-        //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
-        //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
-        //        );
+        FloodFill(
+                countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
+                countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
+                );
 
         tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
         tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
