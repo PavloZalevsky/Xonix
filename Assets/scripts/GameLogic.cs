@@ -296,25 +296,6 @@ public class GameLogic : MonoBehaviour
         transform.Translate(new Vector3(moveX, moveY, 0) * Time.deltaTime, Space.World);
         Player.position = new Vector3(gridpos.x + 0.5f, gridpos.y);
 
-        //if (oldgridpos.x > 0 && oldgridpos.x < xSize - 1 && oldgridpos.y > 0 && oldgridpos.y < ySize - 1)
-        //{
-        //    try
-        //    {
-        //        if (map[(int)oldgridpos.x][(int)oldgridpos.y] == 33 &&
-        //            ((map[(int)gridpos.x + 1][(int)gridpos.y] == 0 && map[(int)gridpos.x - 1][(int)gridpos.y] == 0)
-        //             || (map[(int)gridpos.x][(int)gridpos.y + 1] == 0 && map[(int)gridpos.x][(int)gridpos.y - 1] == 0)))
-        //        {
-        //            points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
-        //            tex.SetPixel((int)gridpos.x, (int)gridpos.y, Color.gray);
-        //            tex.Apply();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Debug.Log("!!! " + (int)oldgridpos.x + " " + (int)oldgridpos.y);
-        //    }
-        //}
-
         direction = new Vector2(moveX, moveY);
 
         if (oldgridpos != gridpos)
@@ -576,10 +557,6 @@ public class GameLogic : MonoBehaviour
             GameWin();
         }
 
-        //StartCoroutine(FloodFillCorot(
-        //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
-        //        countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
-        //        ));
         FloodFill(
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.x) : Mathf.RoundToInt(middleRight.x),
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
@@ -619,24 +596,6 @@ public class GameLogic : MonoBehaviour
         ClearFill(x - 1, y);
         ClearFill(x, y + 1);
         ClearFill(x, y - 1);
-    }
-
-    private IEnumerator FloodFillCorot(int x, int y)
-    {
-        var color = tex.GetPixel(x, y);
-
-        if (color == Color.green || color == Color.magenta || color == Color.black || x < 1 || x >= xSize - 1 || y < 1 || y >= ySize - 1)
-            yield break;
-
-        map[x][y] = 33;
-        tex.SetPixel(x, y, Color.green);
-        tex.Apply();
-
-        yield return new WaitForSeconds(0.025f);
-        StartCoroutine(FloodFillCorot(x + 1, y));
-        StartCoroutine(FloodFillCorot(x - 1, y));
-        StartCoroutine(FloodFillCorot(x, y + 1));
-        StartCoroutine(FloodFillCorot(x, y - 1));
     }
 
     public void FloodFill(int x, int y)
