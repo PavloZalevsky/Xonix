@@ -34,8 +34,8 @@ public class GameView : GameLogic
         BtnRestart.onClick.AddListener(OnBtnRestarClick);
         BtnExit.onClick.AddListener(OnBtnExitClick);
         BtnPause.onClick.AddListener(OnBtnPauseClick);
-        //  StartGamePanel.SetActive(true);
-        StartGame();
+         StartGamePanel.SetActive(true);
+       // StartGame();
     }
     void OnDisable()
     {

@@ -116,7 +116,11 @@ public class GameLogic : MonoBehaviour
 
         SpawnEnemies(level);
         Invoke("Loading", 0.5f);
+        start = false;
+        Timer(time);
     }
+
+    bool start = false;
 
     void Loading()
     {
@@ -126,8 +130,6 @@ public class GameLogic : MonoBehaviour
 
     private void Restart()
     {
-        CurrentLife = CountLife;
-
         pos = new Vector3(xSize / 2, 0, 0);
         gridpos = pos;
         oldgridpos = Vector2.zero;
@@ -142,14 +144,15 @@ public class GameLogic : MonoBehaviour
         tex.Apply();
         myPoins.Clear();
         points.Clear();
+        time = LevelConfig.instance.levels[level - 1].Time;
 
         if (--CurrentLife == 0)
         {
             GameOver();
         }
         ShowHeart(CurrentLife);
-
-
+        Timer(time);
+        start = false;
     }
 
 
@@ -193,9 +196,11 @@ public class GameLogic : MonoBehaviour
 
     void UpdateTimer()
     {
+        if (!start) return;
+
         time -= Time.deltaTime;
         if (time <= 0)
-            GameOver();
+            Restart();
 
         Timer(time);
     }
@@ -210,6 +215,7 @@ public class GameLogic : MonoBehaviour
             Touch t = Input.GetTouch(0);
             if (t.phase == TouchPhase.Began)
             {
+                start = true;
                 firstPressPos = new Vector2(t.position.x, t.position.y);
             }
             if (t.phase == TouchPhase.Moved)
@@ -221,41 +227,35 @@ public class GameLogic : MonoBehaviour
 
                 if (currentSwipe.y > 0 && currentSwipe.x > wid * -1 && currentSwipe.x < wid) //up
                 {
-                    Debug.Log("up");
                     moveY = 1 * PlayerSpeed;
                 }
                 if (currentSwipe.y < 0 && currentSwipe.x > wid * -1f && currentSwipe.x < wid)// down
                 {
-                    Debug.Log("down");
                     moveY = -1 * PlayerSpeed;
                 }
                 if (currentSwipe.x < 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//left
                 {
-                    Debug.Log("left");
                     moveX = -1 * PlayerSpeed;
                 }
                 if (currentSwipe.x > 0 && currentSwipe.y > wid * -1 && currentSwipe.y < wid)//right
                 {
-                    Debug.Log("right");
                     moveX = 1 * PlayerSpeed;
                 }
             }
         }
     }
 
-
     float moveX = 0f;
     float moveY = 0f;
+
     void Update()
     {
         if (!load) return;
 
-        //  MoveEnemy();
+          MoveEnemy();
         UpdateTimer();
         MovePlayer();
     }
-
-    int co = 0;
 
     private void MovePlayer()
     {
@@ -265,6 +265,10 @@ public class GameLogic : MonoBehaviour
 #else
         SwipeTouch();
 #endif
+        if (moveX != 0 || moveY != 0)
+            start = true;
+
+        if (!start) return;
 
         if (moveX != 0f && moveX == direction.x * -1 || moveY != 0f && moveY == direction.y * -1f)
         {
@@ -276,7 +280,9 @@ public class GameLogic : MonoBehaviour
         var somethingPressed = moveX != 0f || moveY != 0f;
         moveX = !somethingPressed ? direction.x : moveX;
         moveY = !somethingPressed ? direction.y : moveY;
+       
 
+       
         if (Mathf.Abs(moveX) > Mathf.Abs(moveY))
             moveY = 0.0f;
         else
@@ -448,7 +454,6 @@ public class GameLogic : MonoBehaviour
         CreateMewBorder();
         points.Clear();
         direction = Vector2.zero;
-        // 
     }
     int c = 0;
 
