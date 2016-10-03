@@ -249,7 +249,7 @@ public class GameLogic : MonoBehaviour
     {
         if (!load) return;
 
-        MoveEnemy();
+      //  MoveEnemy();
         UpdateTimer();
         MovePlayer();
     }
@@ -299,7 +299,14 @@ public class GameLogic : MonoBehaviour
         {
             try
             {
-                if (map[(int)oldgridpos.x][(int)oldgridpos.y] == 33 &&
+                //if (map[(int)gridpos.x + 1][(int)gridpos.y] == 33 || map[(int)gridpos.x - 1][(int)gridpos.y] == 33
+                //    || map[(int)gridpos.x][(int)gridpos.y + 1] == 33 && map[(int)gridpos.x][(int)gridpos.y - 1] == 33)
+                //{
+                //    points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
+                //    tex.SetPixel((int)oldgridpos.x, (int)oldgridpos.y, Color.red);
+                //    tex.Apply();
+
+                    if (map[(int)oldgridpos.x][(int)oldgridpos.y] == 33 &&
                     ((map[(int)gridpos.x + 1][(int)gridpos.y] == 0 && map[(int)gridpos.x - 1][(int)gridpos.y] == 0)
                      || (map[(int)gridpos.x][(int)gridpos.y + 1] == 0 && map[(int)gridpos.x][(int)gridpos.y - 1] == 0)))
                 {
@@ -427,21 +434,42 @@ public class GameLogic : MonoBehaviour
     private void CheckPoins()
     {
         bool found = false;
-        foreach (var p in points)
+        List<Vector3> poinsToCheck = new List<Vector3>();
+
+        for (int i = 0; i < points.Count -1; i++)
         {
-            if (p.x <= 0 || p.x >= xSize - 1 || p.y <= 0 || p.y >= ySize - 1)
+            if (points[i].x <= 0 || points[i].x >= xSize - 1 || points[i].y <= 0 || points[i].y >= ySize - 1)
                 continue;
 
-            if (map[(int)p.x +1][(int)p.y] == 1 || map[(int)p.x - 1][(int)p.y] == 1 || map[(int)p.x][(int)p.y + 1] == 1 || map[(int)p.x ][(int)p.y - 1] == 1)
+            if (map[(int)points[i].x + 1][(int)points[i].y] == 1 || map[(int)points[i].x - 1][(int)points[i].y] == 1 || map[(int)points[i].x][(int)points[i].y + 1] == 1 || map[(int)points[i].x][(int)points[i].y - 1] == 1)
             {
+                poinsToCheck.Add(points[i]);
+                poinsToCheck.Add(points[i - 1]);
+                found = true;
+            }
+
+            if (points[i].x < 0 || points[i].x > xSize - 1 || points[i].y < 0 || points[i].y > ySize - 1)
+                continue;
+
+            if (map[(int)points[i].x + 1][(int)points[i].y] == 33 || map[(int)points[i].x - 1][(int)points[i].y] == 33 || map[(int)points[i].x][(int)points[i].y + 1] == 33 || map[(int)points[i].x][(int)points[i].y - 1] == 33)
+            {
+                poinsToCheck.Add(points[i]);
+                poinsToCheck.Add(points[i - 1]);
                 found = true;
             }
         }
-
-
         CheckPoins(points.Last(), points[points.Count - 2]);
 
-
+        if (found)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                if(i %2 != 0)
+                {
+                    CheckPoins(points[i-1], points[i]);
+                }
+            }
+        }
     }
 
     private void CheckPoins(Vector3 p1, Vector3 p2)
