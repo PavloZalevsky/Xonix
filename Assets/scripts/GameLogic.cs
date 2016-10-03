@@ -337,14 +337,16 @@ public class GameLogic : MonoBehaviour
                     tex.Apply();
                     points.Add(new Vector3(Ox, Oy));
                 }
-                else if (map[Ox][Oy] != 33 && ((map[Ox - 1][Oy] == 33 && map[Ox  + 1][Oy] == 1) || (map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 33) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
-                 &&  (map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 33 && map[Ox][Oy + 1] == 1) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 33) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0))
+                else if (map[Ox][Oy] != 33 && (map[Ox + 1][Oy] == 1 && map[Ox  - 1][Oy] == 0) || (map[Ox - 1][Oy] == 33 && map[Ox = 1][Oy] == 1) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 33) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0)
+                                          &&  (map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 33 && map[Ox][Oy + 1] == 1) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 33) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0) )
                  {
                     tex.SetPixel(Ox, Oy, Color.black);
                     tex.Apply();
 
                     points.Add(new Vector3(Ox, Oy));
                 }
+
+
                 else if((map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 33 && map[Ox ][Oy + 1] == 33 && map[Ox ][Oy - 1] == 33)
                     || ( map[Ox + 1][Oy] == 33 && map[Ox - 1][Oy] == 1 && map[Ox][Oy + 1] == 33 && map[Ox][Oy - 1] == 33)
                     || ( map[Ox + 1][Oy] == 33 && map[Ox - 1][Oy] == 33 && map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 33)
@@ -354,6 +356,15 @@ public class GameLogic : MonoBehaviour
                     tex.Apply();
                     points.Add(new Vector3(Ox, Oy));
                 }
+                //else if (map[Ox][Oy] == 1
+                //&& (map[Ox + 1][Oy] == 33 && map[Ox - 1][Oy] == 0)
+                //|| (map[Ox - 1][Oy] == 33 && map[Ox + 1][Oy] == 0)
+                //|| (map[Ox][Oy + 1] == 33 && map[Ox][Oy - 1] == 0)
+                //|| (map[Ox - 1][Oy] == 33 && map[Ox][Oy + 1] == 0))
+                //{
+                //    if (points.Conc > 1)
+                //        AutoFloodFill();
+               // }
             }
 
 
