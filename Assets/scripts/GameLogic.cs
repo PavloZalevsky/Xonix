@@ -383,9 +383,7 @@ public class GameLogic : MonoBehaviour
 
     void MoveEnemy()
     {
-        //TODO//
         if (!load) return;
-
 
         foreach (var ene in enemies)
         {
