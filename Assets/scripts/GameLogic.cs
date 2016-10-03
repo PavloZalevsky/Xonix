@@ -426,8 +426,28 @@ public class GameLogic : MonoBehaviour
 
     private void CheckPoins()
     {
-        var lastPoint = points.Last();
-        var preLastPoint = points[points.Count - 2];
+        bool found = false;
+        foreach (var p in points)
+        {
+            if (p.x <= 0 || p.x >= xSize - 1 || p.y <= 0 || p.y >= ySize - 1)
+                continue;
+
+            if (map[(int)p.x +1][(int)p.y] == 1 || map[(int)p.x - 1][(int)p.y] == 1 || map[(int)p.x][(int)p.y + 1] == 1 || map[(int)p.x ][(int)p.y - 1] == 1)
+            {
+                found = true;
+            }
+        }
+
+
+        CheckPoins(points.Last(), points[points.Count - 2]);
+
+
+    }
+
+    private void CheckPoins(Vector3 p1, Vector3 p2)
+    {
+        var lastPoint = p1;
+        var preLastPoint = p2;
 
         var difference = lastPoint - preLastPoint;
         var angle = Mathf.Atan2(difference.y, difference.x);
@@ -438,9 +458,9 @@ public class GameLogic : MonoBehaviour
         //   Debug.Log(middleLeft);
         //  Debug.Log(middleRight);
 
-       //tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
-       // tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
-       // tex.Apply();
+        //tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
+        // tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
+        // tex.Apply();
 
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
