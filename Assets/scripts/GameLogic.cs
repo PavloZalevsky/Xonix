@@ -333,18 +333,12 @@ public class GameLogic : MonoBehaviour
                 if (map[Ox][Oy] != 33 && (((map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
                 && ((map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0))))
                 {
-                    tex.SetPixel(Ox, Oy, Color.black);
-                    tex.Apply();
-                    points.Add(new Vector3(Ox, Oy));
+                   points.Add(new Vector3(Ox, Oy));
                    flag = false;
-
                 }
                 else if (map[Ox][Oy] != 33 && (map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 33 && map[Ox + 1][Oy] == 1) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 33) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0)
                                           && (map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 33 && map[Ox][Oy + 1] == 1) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 33) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0))
                 {
-                    tex.SetPixel(Ox, Oy, Color.black);
-                    tex.Apply();
-                   // flag = false;
                     points.Add(new Vector3(Ox, Oy));
                 }
 
@@ -354,11 +348,8 @@ public class GameLogic : MonoBehaviour
                     || (map[Ox + 1][Oy] == 33 && map[Ox - 1][Oy] == 33 && map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 33)
                     || (map[Ox + 1][Oy] == 33 && map[Ox - 1][Oy] == 33 && map[Ox][Oy + 1] == 33 && map[Ox][Oy - 1] == 1))
                 {
-                    tex.SetPixel(Ox, Oy, Color.black);
-                    tex.Apply();
                     points.Add(new Vector3(Ox, Oy));
                     flag = false;
-
                 }
                 else if (map[Ox][Oy] == 1
                 && (map[Ox + 1][Oy] == 33 && map[Ox - 1][Oy] == 0)
@@ -373,13 +364,9 @@ public class GameLogic : MonoBehaviour
                             AutoFloodFill();
                             flag = true;
                         }
-
-
                     }
                 }
             }
-
-
 
             oldgridpos = gridpos;
         }
@@ -455,8 +442,6 @@ public class GameLogic : MonoBehaviour
 
     void AutoFloodFill(bool check = true)
     {
-
-        Debug.Log("AutoFloodFill");
         points.Add(new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0));
 
         CheckPoins(check);
@@ -502,26 +487,14 @@ public class GameLogic : MonoBehaviour
 
                     if (i > 1)
                     {
-                        tex.SetPixel(Mathf.RoundToInt(points[i - 1].x), Mathf.RoundToInt(points[i - 1].y), Color.magenta);
-                        tex.SetPixel(Mathf.RoundToInt(points[i].x), Mathf.RoundToInt(points[i].y), Color.white);
-                        tex.Apply();
-
                         poinsToCheck.Add(points[i - 1]);
                         poinsToCheck.Add(points[i]);
                         found = true;
                     }
                 }
-                //if (points[i].x < 0 || points[i].x > xSize - 1 || points[i].y < 0 || points[i].y > ySize - 1)
-                //    continue;
-                // Debug.Log(poinsToCheck.Count);
-
-
-
 
             }
         }
-
-        Debug.Log(poinsToCheck.Count);
 
         CheckPoi(points.Last(), points[points.Count - 2]);
 
@@ -539,7 +512,6 @@ public class GameLogic : MonoBehaviour
 
     private void CheckPoi(Vector3 p1, Vector3 p2)
     {
-        // Debug.Log("CheckPoi"); 
         var lastPoint = p1;
         var preLastPoint = p2;
 
@@ -549,11 +521,6 @@ public class GameLogic : MonoBehaviour
         var middleLeft = middlePoint + new Vector3(Mathf.Cos(angle - Mathf.PI / 2) * 1.05f, Mathf.Sin(angle - Mathf.PI / 2) * 1.05f, 0f);
         var middleRight = middlePoint + new Vector3(Mathf.Cos(angle + Mathf.PI / 2) * 1.05f, Mathf.Sin(angle + Mathf.PI / 2) * 1.05f, 0f);
 
-        //   Debug.Log(middleLeft);
-        //  Debug.Log(middleRight);
-
-
-
 
         var countLeft = TryToFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         var countRight = TryToFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
@@ -561,9 +528,6 @@ public class GameLogic : MonoBehaviour
 
         ClearFill(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y));
         ClearFill(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y));
-
-        //Debug.Log(countLeft + " : " + countRight);
-        //Debug.Log("--------------------------------------");
 
         if (countLeft <= countRight)
             paintedPixels += countLeft;
@@ -585,9 +549,7 @@ public class GameLogic : MonoBehaviour
                 countLeft <= countRight ? Mathf.RoundToInt(middleLeft.y) : Mathf.RoundToInt(middleRight.y)
                 );
 
-        tex.SetPixel(Mathf.RoundToInt(middleLeft.x), Mathf.RoundToInt(middleLeft.y), Color.red);
-        tex.SetPixel(Mathf.RoundToInt(middleRight.x), Mathf.RoundToInt(middleRight.y), Color.yellow);
-        tex.Apply();
+
 
         tex.Apply();
     }
