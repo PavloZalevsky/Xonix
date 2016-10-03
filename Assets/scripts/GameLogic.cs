@@ -304,8 +304,8 @@ public class GameLogic : MonoBehaviour
                     ((map[(int)gridpos.x + 1][(int)gridpos.y] == 0 && map[(int)gridpos.x - 1][(int)gridpos.y] == 0)
                      || (map[(int)gridpos.x][(int)gridpos.y + 1] == 0 && map[(int)gridpos.x][(int)gridpos.y - 1] == 0)))
                 {
-                    points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
-                    tex.SetPixel((int)gridpos.x, (int)gridpos.y, Color.black);
+                //    points.Add(new Vector3(oldgridpos.x, oldgridpos.y));
+                    tex.SetPixel((int)gridpos.x, (int)gridpos.y, Color.gray);
                     tex.Apply();
                 }
             }
@@ -328,11 +328,12 @@ public class GameLogic : MonoBehaviour
 
             if (cur == 33)/*забор*/
             {
-                if (myPoins.Count != 0)
+                if (points.Count != 0 && map[(int)oldgridpos.x][(int)oldgridpos.y] != 33)
                 {
                     AutoFloodFill();
                 }
             }
+
             if (cur != 33 && cur != 1)
             {
                 map[x][y] = 1;
@@ -348,15 +349,15 @@ public class GameLogic : MonoBehaviour
 
             if (oldgridpos.x > 0 && oldgridpos.x < xSize - 1 && oldgridpos.y > 0 && oldgridpos.y < ySize - 1)
             {
-                if (((map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
-                && ((map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0)))
-                {
+                if (map[Ox][Oy] != 33 &&(((map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
+                && ((map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0))))
+                    {
                     tex.SetPixel(Ox, Oy, Color.black);
                     tex.Apply();
                     points.Add(new Vector3(Ox, Oy));
                 }
-                else if (((map[Ox - 1][Oy] == 33 && map[Ox  + 1][Oy] == 1) || (map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 33) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
-                 &&  (map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 33 && map[Ox][Oy + 1] == 1) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 33) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0)) 
+                else if (map[Ox][Oy] != 33 && ((map[Ox - 1][Oy] == 33 && map[Ox  + 1][Oy] == 1) || (map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 33) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
+                 &&  (map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 33 && map[Ox][Oy + 1] == 1) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 33) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0))
                  {
                     tex.SetPixel(Ox, Oy, Color.black);
                     tex.Apply();
@@ -365,6 +366,8 @@ public class GameLogic : MonoBehaviour
                 }
             }
 
+
+            
             oldgridpos = gridpos;
         }
 
@@ -453,12 +456,6 @@ public class GameLogic : MonoBehaviour
     {
         c = 0;
         bool found = false;
-        Debug.Log("-" + points.Count);
-        foreach (var item in points)
-        {
-            tex.SetPixel((int)item.x, (int)item.y, Color.black);
-            tex.Apply();
-        }
         List<Vector3> poinsToCheck = new List<Vector3>();
         int fi = 0;
         int xi = 0;
@@ -470,21 +467,21 @@ public class GameLogic : MonoBehaviour
             int x = (int)points[i].x;
             int y = (int)points[i].y;
 
-            //if ((map[x + 1][y] == 1 && map[x - 1][y] == 1 && (map[x][y + 1] == 1 && map[x][y - 1] == 0 || map[x][y + 1] == 0 && map[x][y - 1] == 1))
-            //   || (map[x][y + 1] == 1 && map[x][y - 1] == 1 && (map[x + 1][y] == 1 && map[x - 1][y] == 0 || map[x + 1][y] == 0 && map[x - 1][y] == 1)))
-            //{
-            //    if (i - fi == 1)
-            //        continue;
-            //    fi = i;
+            if ((map[x + 1][y] == 1 && map[x - 1][y] == 1 && (map[x][y + 1] == 1 && map[x][y - 1] == 0 || map[x][y + 1] == 0 && map[x][y - 1] == 1))
+               || (map[x][y + 1] == 1 && map[x][y - 1] == 1 && (map[x + 1][y] == 1 && map[x - 1][y] == 0 || map[x + 1][y] == 0 && map[x - 1][y] == 1)))
+            {
+                if (i - fi == 1)
+                    continue;
+                fi = i;
 
-            //    poinsToCheck.Add(points[i]);
-            //    poinsToCheck.Add(points[i - 1]);
-            //    found = true;
-            //}
+                poinsToCheck.Add(points[i]);
+                poinsToCheck.Add(points[i - 1]);
+                found = true;
+            }
             /*else*/ //if (((map[x + 1][y] == 0 && map[x - 1][y] == 1) || (map[x + 1][y] == 33 && map[x - 1][y] == 1) || (map[x + 1][y] == 1 && map[x - 1][y] == 33) || (map[x + 1][y] == 1 && map[x - 1][y] == 0))
                      //&& ((map[x][y + 1] == 0 && map[x][y - 1] == 1) || (map[x][y + 1] == 33 && map[x][y - 1] == 1) || (map[x][y + 1] == 1 && map[x][y - 1] == 33) || (map[x][y + 1] == 1 && map[x][y - 1] == 0)))
 
-            if((map[x + 1][y] == 33 && map[x - 1][y] == 1) || (map[x -1][y] == 33 && map[x  + 1][y] == 1) 
+            if ((map[x + 1][y] == 33 && map[x - 1][y] == 1) || (map[x -1][y] == 33 && map[x  + 1][y] == 1) 
             || (map[x][y + 1] == 33 && map[x][y -1] == 1) || (map[x][y - 1] == 33 && map[x][y + 1] == 1))
             {
                 if (++c == 0) continue;
