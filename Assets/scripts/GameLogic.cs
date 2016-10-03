@@ -343,7 +343,7 @@ public class GameLogic : MonoBehaviour
             {
                 if (myPoins.Count != 0)
                 {
-                    AutoFloodFill();
+                 //   AutoFloodFill();
                 }
             }
             if (cur != 33 && cur != 1)
@@ -364,15 +364,13 @@ public class GameLogic : MonoBehaviour
                 if (((map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
                 && ((map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0)))
                 {
-                    Debug.Log("!");
                     tex.SetPixel(Ox, Oy, Color.black);
                     tex.Apply();
-
                     points.Add(new Vector3(Ox, Oy));
                 }
-             
-                {
-                    Debug.Log("!");
+                else if (((map[Ox - 1][Oy] == 33 && map[Ox  + 1][Oy] == 1) || (map[Ox + 1][Oy] == 1 && map[Ox - 1][Oy] == 0) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 33) || (map[Ox - 1][Oy] == 1 && map[Ox + 1][Oy] == 0))
+                 &&  (map[Ox][Oy + 1] == 1 && map[Ox][Oy - 1] == 0) || (map[Ox][Oy - 1] == 33 && map[Ox][Oy + 1] == 1) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 33) || (map[Ox][Oy - 1] == 1 && map[Ox][Oy + 1] == 0)) 
+                 {
                     tex.SetPixel(Ox, Oy, Color.black);
                     tex.Apply();
 
